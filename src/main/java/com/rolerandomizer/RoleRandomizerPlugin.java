@@ -58,12 +58,14 @@ public class RoleRandomizerPlugin extends Plugin
 	private String[] player3Prefs;
 	private String[] player4Prefs;
 	private String[] player5Prefs;
+	private HashMap<Integer, String> usernames;
 
 	@Override
 	protected void startUp() throws Exception
 	{
 		panel = new RoleRandomizerPanel();
 		randomizer = new RoleRandomizer();
+		usernames = new HashMap<Integer, String>();
 		navButton = NavigationButton.builder()
 				.tooltip("BA Role Randomizer")
 				.icon(ICON)
@@ -107,16 +109,15 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted) throws Exception {
 		if (commandExecuted.getCommand().equals("prefs")) {
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", Arrays.toString(player1Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", Arrays.toString(player2Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", Arrays.toString(player3Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", Arrays.toString(player4Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", Arrays.toString(player5Prefs), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(0) + " prefs " + Arrays.toString(player1Prefs), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(1) + " prefs " + Arrays.toString(player2Prefs), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(2) + " prefs " + Arrays.toString(player3Prefs), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(3) + " prefs " + Arrays.toString(player4Prefs), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(4) + " prefs " + Arrays.toString(player5Prefs), null);
 		}
 		if (commandExecuted.getCommand().equals("r"))
 		{
 			// lets build the randoer
-			HashMap<Integer, String> usernames = new HashMap<>();
 			if (commandExecuted.getArguments().length == 10) {
 				usernames.put(0, commandExecuted.getArguments()[0]);
 				usernames.put(1, commandExecuted.getArguments()[2]);
