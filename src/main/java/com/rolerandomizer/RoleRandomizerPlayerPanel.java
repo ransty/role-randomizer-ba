@@ -20,6 +20,7 @@ public class RoleRandomizerPlayerPanel extends PluginPanel {
 
     private static final ColorUIResource DEFAULT_BACKGROUND = new ColorUIResource(192, 192, 192);
     private JButton[] buttons;
+    private JTextField playerTextField;
 
     public int playerNumber;
     public String playerName;
@@ -54,8 +55,8 @@ public class RoleRandomizerPlayerPanel extends PluginPanel {
         playerLabel.setPreferredSize(new Dimension(25, 20));
         this.add(playerLabel);
         c.gridx++;
-        JTextField playerTextField = new JTextField();
-        playerTextField.setPreferredSize(new Dimension(25, 20));
+        playerTextField = new JTextField();
+        playerTextField.setPreferredSize(new Dimension(25, 25));
         this.add(playerTextField);
         c.gridy++;
 
@@ -66,19 +67,14 @@ public class RoleRandomizerPlayerPanel extends PluginPanel {
     }
 
     public int[] getPossibleRoles() {
-        int[] possibleRoles = new int[] {-1, -1, -1, -1, -1};
+        this.playerName = playerTextField.getText();
+        int[] possibleRoles = new int[] {0, 0, 0, 0, 0};
         for (int i = 0; i < buttons.length; i++) {
             if (buttons[i].getBackground().equals(Color.GREEN)) {
-                possibleRoles[i] = i;
+                possibleRoles[i] = 1;
             }
         }
         return possibleRoles;
-    }
-
-    public int calculateRole() {
-        int[] possibleRoles = this.getPossibleRoles();
-        int rnd = new Random().nextInt(possibleRoles.length);
-        return possibleRoles[rnd];
     }
 
     private JButton[] generatePreferenceButtons(JPanel panel, GridBagConstraints constraints) {

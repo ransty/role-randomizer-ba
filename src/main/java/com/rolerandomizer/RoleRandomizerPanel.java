@@ -1,19 +1,27 @@
 package com.rolerandomizer;
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.PluginPanel;
-
+import net.runelite.api.Client;
 import javax.management.relation.Role;
 import javax.swing.*;
+import javax.inject.Inject;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.HashMap;
 
 @Slf4j
 public class RoleRandomizerPanel extends PluginPanel {
+
+    @Inject
+    private Client client;
 
     private RoleRandomizerPlayerPanel playerPanel1;
     private RoleRandomizerPlayerPanel playerPanel2;
@@ -21,56 +29,44 @@ public class RoleRandomizerPanel extends PluginPanel {
     private RoleRandomizerPlayerPanel playerPanel4;
     private RoleRandomizerPlayerPanel playerPanel5;
 
+    private JLabel baRoleRandomizerLabel;
+
     public RoleRandomizerPanel() {
         super();
 
-        JLabel baRoleRandomizerLabel = new JLabel("BA Role Randomizer");
+        baRoleRandomizerLabel = new JLabel("BA Role Randomizer");
         baRoleRandomizerLabel.setSize(50, 25);
         baRoleRandomizerLabel.setForeground(Color.WHITE);
         this.add(baRoleRandomizerLabel);
 
         this.initializeAndAddPlayerPanels();
 
+        RoleRandomizer rr = new RoleRandomizer();
+
+        HashMap<Integer, String> playerNames = new HashMap<Integer, String>();
+
         JButton randomizeButton = new JButton("RANDOMIZE!");
         randomizeButton.addActionListener(new ActionListener() {
             @Override
+            @Subscribe
             public void actionPerformed(ActionEvent e) {
-                int[] availableRoles = new int[] {0, 1, 2, 3, 4};
-
-                int roleSelectionPlayer1 = selectRole(playerPanel1, availableRoles);
-                System.out.println("PLAYER 1 ROLE SELECTION: " + roleSelectionPlayer1);
-
-                // Random role selected
-                int roleSelectionPlayer2 = selectRole(playerPanel2, availableRoles);
-                System.out.println("PLAYER 2 ROLE SELECTION: " + roleSelectionPlayer2);
-                System.out.println("AVAILABLE ROLES LEFT: " + availableRoles[0] + " " + availableRoles[1] + " " + availableRoles[2] + " " + availableRoles[3] + " " + availableRoles[4]);
-
-                int roleSelectionPlayer3 = selectRole(playerPanel3, availableRoles);
-                System.out.println("PLAYER 3 ROLE SELECTION: " + roleSelectionPlayer3);
-                System.out.println("AVAILABLE ROLES LEFT: " + availableRoles[0] + " " + availableRoles[1] + " " + availableRoles[2] + " " + availableRoles[3] + " " + availableRoles[4]);
-
-                int roleSelectionPlayer4 = selectRole(playerPanel4, availableRoles);
-                System.out.println("PLAYER 4 ROLE SELECTION: " + roleSelectionPlayer4);
-                System.out.println("AVAILABLE ROLES LEFT: " + availableRoles[0] + " " + availableRoles[1] + " " + availableRoles[2] + " " + availableRoles[3] + " " + availableRoles[4]);
-
-                int roleSelectionPlayer5 = selectRole(playerPanel5, availableRoles);
-                System.out.println("PLAYER 5 ROLE SELECTION: " + roleSelectionPlayer5);
-                System.out.println("AVAILABLE ROLES LEFT: " + availableRoles[0] + " " + availableRoles[1] + " " + availableRoles[2] + " " + availableRoles[3] + " " + availableRoles[4]);
-
-            }
-
-            private int selectRole(RoleRandomizerPlayerPanel playerPanel, int[] avaliableRoles) {
-                int roleSelection;
-                while (true) {
-                    roleSelection = playerPanel.calculateRole();
-                    if (avaliableRoles[roleSelection] != -1) {
-                        avaliableRoles[roleSelection] = -1;
-                        break;
-                    } else {
-                        roleSelection = playerPanel.calculateRole();
-                    }
+                rr.setPlayerOnePreferences(playerPanel1.getPossibleRoles());
+                rr.setPlayerTwoPreferences(playerPanel2.getPossibleRoles());
+                rr.setPlayerThreePreferences(playerPanel3.getPossibleRoles());
+                rr.setPlayerFourPreferences(playerPanel4.getPossibleRoles());
+                rr.setPlayerFivePreferences(playerPanel5.getPossibleRoles());
+                playerNames.put(0, playerPanel1.playerName);
+                playerNames.put(1, playerPanel2.playerName);
+                playerNames.put(2, playerPanel3.playerName);
+                playerNames.put(3, playerPanel4.playerName);
+                playerNames.put(4, playerPanel5.playerName);
+                rr.setUsernames(playerNames);
+                try {
+                    String[] roles = rr.randomize();
+                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "testing", null);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
-                return roleSelection;
             }
         });
         randomizeButton.setFocusPainted(false);
