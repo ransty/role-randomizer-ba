@@ -29,7 +29,13 @@ public class RoleRandomizerPanel extends PluginPanel {
     private RoleRandomizerPlayerPanel playerPanel4;
     private RoleRandomizerPlayerPanel playerPanel5;
 
+    JButton randomizeButton;
+
     private JLabel baRoleRandomizerLabel;
+
+    public String[] roles;
+
+    RoleRandomizer rr;
 
     public RoleRandomizerPanel() {
         super();
@@ -41,36 +47,31 @@ public class RoleRandomizerPanel extends PluginPanel {
 
         this.initializeAndAddPlayerPanels();
 
-        RoleRandomizer rr = new RoleRandomizer();
+        rr = new RoleRandomizer();
 
-        HashMap<Integer, String> playerNames = new HashMap<Integer, String>();
-
-        JButton randomizeButton = new JButton("RANDOMIZE!");
-        randomizeButton.addActionListener(new ActionListener() {
-            @Override
-            @Subscribe
-            public void actionPerformed(ActionEvent e) {
-                rr.setPlayerOnePreferences(playerPanel1.getPossibleRoles());
-                rr.setPlayerTwoPreferences(playerPanel2.getPossibleRoles());
-                rr.setPlayerThreePreferences(playerPanel3.getPossibleRoles());
-                rr.setPlayerFourPreferences(playerPanel4.getPossibleRoles());
-                rr.setPlayerFivePreferences(playerPanel5.getPossibleRoles());
-                playerNames.put(0, playerPanel1.playerName);
-                playerNames.put(1, playerPanel2.playerName);
-                playerNames.put(2, playerPanel3.playerName);
-                playerNames.put(3, playerPanel4.playerName);
-                playerNames.put(4, playerPanel5.playerName);
-                rr.setUsernames(playerNames);
-                try {
-                    String[] roles = rr.randomize();
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "testing", null);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            }
-        });
+        randomizeButton = new JButton("RANDOMIZE!");
         randomizeButton.setFocusPainted(false);
         this.add(randomizeButton);
+    }
+
+    public void setPreferencesAndUsernames() {
+        HashMap<Integer, String> playerNames = new HashMap<Integer, String>();
+        rr.setPlayerOnePreferences(playerPanel1.getPossibleRoles());
+        rr.setPlayerTwoPreferences(playerPanel2.getPossibleRoles());
+        rr.setPlayerThreePreferences(playerPanel3.getPossibleRoles());
+        rr.setPlayerFourPreferences(playerPanel4.getPossibleRoles());
+        rr.setPlayerFivePreferences(playerPanel5.getPossibleRoles());
+        playerNames.put(0, playerPanel1.playerName);
+        playerNames.put(1, playerPanel2.playerName);
+        playerNames.put(2, playerPanel3.playerName);
+        playerNames.put(3, playerPanel4.playerName);
+        playerNames.put(4, playerPanel5.playerName);
+        rr.setUsernames(playerNames);
+        try {
+            roles = rr.randomize();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     private void initializeAndAddPlayerPanels() {

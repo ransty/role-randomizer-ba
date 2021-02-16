@@ -86,8 +86,6 @@ public class RoleRandomizer {
                 case 1:
                 case 2:
                 case 3:
-                    roles[ints[i]] = this.usernames.get(i) + " / ";
-                    break;
                 case 4:
                     roles[ints[i]] = this.usernames.get(i);
                     break;
