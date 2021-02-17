@@ -55,7 +55,6 @@ public class RoleRandomizerPlugin extends Plugin
 	private String[] player3Prefs;
 	private String[] player4Prefs;
 	private String[] player5Prefs;
-	private boolean isPreferencesSet;
 	private HashMap<Integer, String> usernames;
 
 	@Override
@@ -76,13 +75,38 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted) throws Exception
 	{
-		if (commandExecuted.getCommand().equals("prefs") && isPreferencesSet)
+		if (commandExecuted.getCommand().equals("prefs") && randomizer.isPreferencesSet())
 		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(0) + " prefs " + Arrays.toString(player1Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(1) + " prefs " + Arrays.toString(player2Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(2) + " prefs " + Arrays.toString(player3Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(3) + " prefs " + Arrays.toString(player4Prefs), null);
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(4) + " prefs " + Arrays.toString(player5Prefs), null);
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					nounCapitalize(usernames.get(0)) + Arrays.toString(player1Prefs),
+					null
+			);
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					nounCapitalize(usernames.get(1)) + Arrays.toString(player2Prefs),
+					null
+			);
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					nounCapitalize(usernames.get(2)) + Arrays.toString(player3Prefs),
+					null
+			);
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					nounCapitalize(usernames.get(3)) + Arrays.toString(player4Prefs),
+					null
+			);
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					nounCapitalize(usernames.get(4)) + Arrays.toString(player5Prefs),
+					null
+			);
 		}
 
 		if (commandExecuted.getCommand().equals("r"))
@@ -93,7 +117,12 @@ public class RoleRandomizerPlugin extends Plugin
 				collectPreferences(commandExecuted.getArguments());
 				setAllPreferences();
 				String teamRoles = generateRandom();
-				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", teamRoles, null);
+				client.addChatMessage(
+						ChatMessageType.GAMEMESSAGE,
+						"",
+						teamRoles,
+						null
+				);
 			}
 		}
 	}
@@ -125,7 +154,6 @@ public class RoleRandomizerPlugin extends Plugin
 		randomizer.setPlayerThreePreferences(convertPreferences(player3Prefs));
 		randomizer.setPlayerFourPreferences(convertPreferences(player4Prefs));
 		randomizer.setPlayerFivePreferences(convertPreferences(player5Prefs));
-		isPreferencesSet = true;
 	}
 
 	private String generateRandom() throws Exception
@@ -139,39 +167,35 @@ public class RoleRandomizerPlugin extends Plugin
 				case 0:
 				case 1:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							roles[index]
-									.substring(0, 1)
-									.toUpperCase()
-									+ roles[index]
-									.substring(1), Color.RED.darker())).append(" / ");
+							nounCapitalize(roles[index]),
+							Color.RED.darker())).append(" / "
+					);
 					break;
 				case 2:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							roles[index]
-									.substring(0, 1)
-									.toUpperCase()
-									+ roles[index]
-									.substring(1), Color.GREEN.darker().darker())).append(" / ");
+							nounCapitalize(roles[index]),
+							Color.GREEN.darker().darker())).append(" / "
+					);
 					break;
 				case 3:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							roles[index]
-									.substring(0, 1)
-									.toUpperCase()
-									+ roles[index]
-									.substring(1), Color.YELLOW)).append(" / ");
+							nounCapitalize(roles[index]),
+							Color.YELLOW)).append(" / "
+					);
 					break;
 				case 4:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							roles[index]
-									.substring(0, 1)
-									.toUpperCase()
-									+ roles[index]
-									.substring(1), Color.BLUE.darker()));
+							nounCapitalize(roles[index]),
+							Color.BLUE.darker())
+					);
 					break;
 			}
 		}
 		return shortFormRoles.toString();
+	}
+
+	private String nounCapitalize(String noun) {
+		return noun.substring(0, 1).toUpperCase() + noun.substring(1);
 	}
 
 	private int[] convertPreferences(String[] prefs)

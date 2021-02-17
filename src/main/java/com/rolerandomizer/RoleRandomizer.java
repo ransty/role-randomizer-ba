@@ -32,13 +32,13 @@ import com.rolerandomizer.exceptions.NoPermutationException;
 public class RoleRandomizer
 {
 
-    private HashMap<Integer, String> usernames;
+    public HashMap<Integer, String> usernames;
 
-    private int[] playerOnePreferences;
-    private int[] playerTwoPreferences;
-    private int[] playerThreePreferences;
-    private int[] playerFourPreferences;
-    private int[] playerFivePreferences;
+    public int[] playerOnePreferences;
+    public int[] playerTwoPreferences;
+    public int[] playerThreePreferences;
+    public int[] playerFourPreferences;
+    public int[] playerFivePreferences;
 
     public RoleRandomizer()
     {
@@ -95,16 +95,41 @@ public class RoleRandomizer
 
     public String[] randomize() throws Exception
     {
-        ArrayList<int[]> perms = generatePermutations();
-        if (perms.size() > 0)
+        if (isPreferencesSet())
         {
-            int chosenIndex = (int) Math.floor(Math.random() * perms.size());
-            return printRoles(perms.get(chosenIndex));
+            ArrayList<int[]> perms = generatePermutations();
+            if (perms.size() > 0)
+            {
+                int chosenIndex = (int) Math.floor(Math.random() * perms.size());
+                return printRoles(perms.get(chosenIndex));
+            }
+            else
+            {
+                throw new NoPermutationException("No permutations to choose from");
+            }
         }
-        else
+        return null;
+    }
+
+    public boolean isPreferencesSet()
+    {
+        if (playerOnePreferences != null && playerOnePreferences.length > 0)
         {
-            throw new NoPermutationException("No permutations to choose from");
+            if (playerTwoPreferences != null && playerTwoPreferences.length > 0)
+            {
+                if (playerThreePreferences != null && playerThreePreferences.length > 0)
+                {
+                    if (playerFourPreferences != null && playerFourPreferences.length > 0)
+                    {
+                        if (playerFivePreferences != null && playerFivePreferences.length > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
+        return false;
     }
 
     public void setUsernames(HashMap<Integer, String> usernames)
