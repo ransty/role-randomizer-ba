@@ -27,6 +27,7 @@ package com.rolerandomizer;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Math;
+import com.rolerandomizer.exceptions.NoPermutationException;
 
 public class RoleRandomizer
 {
@@ -49,35 +50,35 @@ public class RoleRandomizer
         ArrayList<int[]> permutations = new ArrayList<>();
         for (int i = 0; i < 5; i++)
         {
-            if (this.playerOnePreferences[i] != 1) 
+            if (playerOnePreferences[i] != 1)
             {
                 continue;
             }
             
             for (int j = 0; j < 5; j++)
             {
-                if (j == i || this.playerTwoPreferences[j] != 1) 
+                if (j == i || playerTwoPreferences[j] != 1)
                 {
                     continue;
                 }
                 
                 for (int k = 0; k < 5; k++)
                 {
-                    if (k == i || k == j || this.playerThreePreferences[k] != 1) 
+                    if (k == i || k == j || playerThreePreferences[k] != 1)
                     {
                         continue;
                     }
 
                     for (int l = 0; l < 5; l++)
                     {
-                        if (l == i || l == j || l == k || this.playerFourPreferences[l] != 1) 
+                        if (l == i || l == j || l == k || playerFourPreferences[l] != 1)
                         {
                             continue;
                         }
 
                         for (int m = 0; m < 5; m++)
                         {
-                            if (m == i || m == j || m == k || m == l || this.playerFivePreferences[m] != 1) 
+                            if (m == i || m == j || m == k || m == l || playerFivePreferences[m] != 1)
                             {
                                 continue;
                             }
@@ -94,11 +95,11 @@ public class RoleRandomizer
 
     public String[] randomize() throws Exception
     {
-        ArrayList<int[]> perms = this.generatePermutations();
+        ArrayList<int[]> perms = generatePermutations();
         if (perms.size() > 0)
         {
             int chosenIndex = (int) Math.floor(Math.random() * perms.size());
-            return this.printRoles(perms.get(chosenIndex));
+            return printRoles(perms.get(chosenIndex));
         }
         else
         {
@@ -113,56 +114,37 @@ public class RoleRandomizer
 
     public void setPlayerOnePreferences(int[] prefs)
     {
-        this.playerOnePreferences = prefs;
+        playerOnePreferences = prefs;
     }
 
     public void setPlayerTwoPreferences(int[] prefs)
     {
-        this.playerTwoPreferences = prefs;
+        playerTwoPreferences = prefs;
     }
 
     public void setPlayerThreePreferences(int[] prefs)
     {
-        this.playerThreePreferences = prefs;
+        playerThreePreferences = prefs;
     }
 
     public void setPlayerFourPreferences(int[] prefs)
     {
-        this.playerFourPreferences = prefs;
+        playerFourPreferences = prefs;
     }
 
     public void setPlayerFivePreferences(int[] prefs)
     {
-        this.playerFivePreferences = prefs;
+        playerFivePreferences = prefs;
     }
 
     private String[] printRoles(int[] ints) throws Exception
     {
-        if (this.usernames.size() < 5)
-        {
-            throw new MissingUsernamesException("Not all usernames have been set, unable to randomize");
-        }
         String[] roles = new String[5];
         for (int i = 0; i < ints.length; i++)
         {
-            roles[ints[i]] = this.usernames.get(i);
+            roles[ints[i]] = usernames.get(i);
         }
         return roles;
     }
 }
 
-class NoPermutationException extends Exception
-{
-    public NoPermutationException(String message)
-    {
-        super(message);
-    }
-}
-
-class MissingUsernamesException extends Exception
-{
-    public MissingUsernamesException(String message)
-    {
-        super(message);
-    }
-}

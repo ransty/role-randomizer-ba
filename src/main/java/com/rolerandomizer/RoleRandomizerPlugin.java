@@ -33,13 +33,10 @@ import java.util.HashMap;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.CommandExecuted;
-import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.ClientToolbar;
-import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ColorUtil;
 
 @Slf4j
@@ -51,31 +48,21 @@ public class RoleRandomizerPlugin extends Plugin
 	@Inject
 	private Client client;
 
-	@Inject
-	private ChatMessageManager chatMessageManager;
-
-	@Inject
-	private ClientToolbar clientToolbar;
-
-	@Inject
-	private RoleRandomizerConfig config;
-
 	private RoleRandomizer randomizer;
-
-	private NavigationButton navButton;
 
 	private String[] player1Prefs;
 	private String[] player2Prefs;
 	private String[] player3Prefs;
 	private String[] player4Prefs;
 	private String[] player5Prefs;
+	private boolean isPreferencesSet;
 	private HashMap<Integer, String> usernames;
 
 	@Override
 	protected void startUp() throws Exception
 	{
 		randomizer = new RoleRandomizer();
-		usernames = new HashMap<Integer, String>();
+		usernames = new HashMap<>();
 	}
 
 	@Override
@@ -83,13 +70,13 @@ public class RoleRandomizerPlugin extends Plugin
 	{
 		usernames = null;
 		randomizer = null;
-		log.info("Example stopped!");
+		log.debug("Shutting down BA role randomizer plugin");
 	}
 
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted) throws Exception
 	{
-		if (commandExecuted.getCommand().equals("prefs"))
+		if (commandExecuted.getCommand().equals("prefs") && isPreferencesSet)
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(0) + " prefs " + Arrays.toString(player1Prefs), null);
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", usernames.get(1) + " prefs " + Arrays.toString(player2Prefs), null);
@@ -138,52 +125,53 @@ public class RoleRandomizerPlugin extends Plugin
 		randomizer.setPlayerThreePreferences(convertPreferences(player3Prefs));
 		randomizer.setPlayerFourPreferences(convertPreferences(player4Prefs));
 		randomizer.setPlayerFivePreferences(convertPreferences(player5Prefs));
+		isPreferencesSet = true;
 	}
 
 	private String generateRandom() throws Exception
 	{
 		String[] roles = randomizer.randomize();
-		String shortFormRoles = "";
+		StringBuilder shortFormRoles = new StringBuilder();
 		for (int index = 0; index < 5; index++)
 		{
 			switch(index)
 			{
 				case 0:
 				case 1:
-					shortFormRoles += ColorUtil.wrapWithColorTag(
+					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 							roles[index]
 									.substring(0, 1)
 									.toUpperCase()
-									+roles[index]
-									.substring(1), Color.RED.darker()) + " / ";
+									+ roles[index]
+									.substring(1), Color.RED.darker())).append(" / ");
 					break;
 				case 2:
-					shortFormRoles += ColorUtil.wrapWithColorTag(
+					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 							roles[index]
 									.substring(0, 1)
 									.toUpperCase()
-									+roles[index]
-									.substring(1), Color.GREEN.darker().darker()) + " / ";
+									+ roles[index]
+									.substring(1), Color.GREEN.darker().darker())).append(" / ");
 					break;
 				case 3:
-					shortFormRoles += ColorUtil.wrapWithColorTag(
+					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 							roles[index]
 									.substring(0, 1)
 									.toUpperCase()
-									+roles[index]
-									.substring(1), Color.YELLOW) + " / ";
+									+ roles[index]
+									.substring(1), Color.YELLOW)).append(" / ");
 					break;
 				case 4:
-					shortFormRoles += ColorUtil.wrapWithColorTag(
+					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 							roles[index]
 									.substring(0, 1)
 									.toUpperCase()
-									+roles[index]
-									.substring(1), Color.BLUE.darker());
+									+ roles[index]
+									.substring(1), Color.BLUE.darker()));
 					break;
 			}
 		}
-		return shortFormRoles;
+		return shortFormRoles.toString();
 	}
 
 	private int[] convertPreferences(String[] prefs)
