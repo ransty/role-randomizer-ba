@@ -72,6 +72,33 @@ public class RoleRandomizerPlugin extends Plugin
 		log.debug("Shutting down BA role randomizer plugin");
 	}
 
+	public String buildPrefsPrint()
+	{
+		String prefs = "";
+		prefs += nounCapitalize(usernames.get(0)) + " "	+ stripArrayExtras(player1Prefs) + "  ";
+		prefs += nounCapitalize(usernames.get(1)) + " " + stripArrayExtras(player2Prefs) + "  ";
+		prefs += nounCapitalize(usernames.get(2)) + " " + stripArrayExtras(player3Prefs) + "  ";
+		prefs += nounCapitalize(usernames.get(3)) + " " + stripArrayExtras(player4Prefs) + "  ";
+		prefs += nounCapitalize(usernames.get(4)) + " " + stripArrayExtras(player5Prefs) + "  ";
+		return prefs;
+	}
+
+	public String stripArrayExtras(String[] array)
+	{
+		if (Arrays.toString(array).equals("fill"))
+		{
+			return nounCapitalize(Arrays.toString(array));
+		}
+		else
+		{
+			return Arrays.toString(array)
+					.replace(",", "")
+					.replace("[", "")
+					.replace("]", "")
+					.trim();
+		}
+	}
+
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted) throws Exception
 	{
@@ -80,32 +107,8 @@ public class RoleRandomizerPlugin extends Plugin
 			client.addChatMessage(
 					ChatMessageType.GAMEMESSAGE,
 					"",
-					nounCapitalize(usernames.get(0)) + Arrays.toString(player1Prefs),
-					null
-			);
-			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					nounCapitalize(usernames.get(1)) + Arrays.toString(player2Prefs),
-					null
-			);
-			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					nounCapitalize(usernames.get(2)) + Arrays.toString(player3Prefs),
-					null
-			);
-			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					nounCapitalize(usernames.get(3)) + Arrays.toString(player4Prefs),
-					null
-			);
-			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					nounCapitalize(usernames.get(4)) + Arrays.toString(player5Prefs),
-					null
+					buildPrefsPrint(),
+			null
 			);
 		}
 
