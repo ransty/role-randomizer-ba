@@ -57,6 +57,8 @@ public class RoleRandomizerPlugin extends Plugin
 	private String[] player5Prefs;
 	private HashMap<Integer, String> usernames;
 
+	private String teamRoles;
+
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -119,7 +121,7 @@ public class RoleRandomizerPlugin extends Plugin
 				setUsernames(commandExecuted.getArguments());
 				collectPreferences(commandExecuted.getArguments());
 				setAllPreferences();
-				String teamRoles = generateRandom();
+				teamRoles = generateRandom();
 				client.addChatMessage(
 						ChatMessageType.GAMEMESSAGE,
 						"",
@@ -127,6 +129,27 @@ public class RoleRandomizerPlugin extends Plugin
 						null
 				);
 			}
+		}
+
+		if (commandExecuted.getCommand().equals("prevr") && !teamRoles.isEmpty())
+		{
+			 client.addChatMessage(
+			 		ChatMessageType.GAMEMESSAGE,
+					 "",
+					 teamRoles,
+					 null
+			 );
+		}
+
+		if (commandExecuted.getCommand().equals("rr") && !teamRoles.isEmpty())
+		{
+			teamRoles = generateRandom();
+			client.addChatMessage(
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					teamRoles,
+					null
+			);
 		}
 	}
 

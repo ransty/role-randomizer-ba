@@ -4,18 +4,28 @@ _Based on the Bab discord bot_
 
 ``::r <name> <prefs>(a/2/c/h/d/fill)``
 
+``::rr`` rerolls a new random based on the prefs stored from ``::r``
+
+``::prevr`` shows the previous generated random
+
 ``::prefs`` (shows previously entered preferences from the ``::r`` command)
 
+
+
+
 ## Examples
+``::r``
+
 ![rando example](https://media1.giphy.com/media/T3EyEHbt3cpHiQFzDA/giphy.gif)
+
+``::prefs``
 
 ![prefs example](https://media0.giphy.com/media/gqlMiZ7TmErK1X9Tov/giphy.gif)
 
+``::prevr and ::rr``
+
+![new commands](https://media2.giphy.com/media/VldmR7ubX8hrmBH0RW/giphy.gif)
 ## TODO:
-- Allow usernames to have spaces in them
 - Not having to specify 'fill' should give the prefs of fill for the player
-- Re-roll that has a flag to remove previous roles
 - Leech mode (or for that fact, any "mode")
 
-Some ideas
-- Make an extend tracker, that reminds you what waves to extend

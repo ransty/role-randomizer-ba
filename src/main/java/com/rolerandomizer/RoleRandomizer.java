@@ -101,7 +101,7 @@ public class RoleRandomizer
             if (perms.size() > 0)
             {
                 int chosenIndex = (int) Math.floor(Math.random() * perms.size());
-                return printRoles(perms.get(chosenIndex));
+                return buildRolesString(perms.get(chosenIndex));
             }
             else
             {
@@ -162,7 +162,7 @@ public class RoleRandomizer
         playerFivePreferences = prefs;
     }
 
-    private String[] printRoles(int[] ints) throws Exception
+    private String[] buildRolesString(int[] ints) throws Exception
     {
         String[] roles = new String[5];
         for (int i = 0; i < ints.length; i++)
