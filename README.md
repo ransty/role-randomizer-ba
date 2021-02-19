@@ -12,6 +12,7 @@ _Based on the Bab discord bot_
 ![prefs example](https://media0.giphy.com/media/gqlMiZ7TmErK1X9Tov/giphy.gif)
 
 ## TODO:
+- Allow usernames to have spaces in them
 - Not having to specify 'fill' should give the prefs of fill for the player
 - Re-roll that has a flag to remove previous roles
 - Leech mode (or for that fact, any "mode")
