@@ -240,6 +240,9 @@ public class RoleRandomizerPlugin extends Plugin
 						newPrefs[0] = 1;
 						newPrefs[1] = 1;
 						break;
+					case 'm':
+						newPrefs[0] = 1;
+						break;
 					case '2':
 						newPrefs[1] = 1;
 						break;
