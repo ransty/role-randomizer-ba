@@ -22,16 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.rolerandomizer;
+package com.rolerandomizer.exceptions;
 
-import net.runelite.client.RuneLite;
-import net.runelite.client.externalplugins.ExternalPluginManager;
-
-public class RoleRandomizerPluginTest
+public class NoPermutationException extends Exception
 {
-	public static void main(String[] args) throws Exception
-	{
-		ExternalPluginManager.loadBuiltin(RoleRandomizerPlugin.class);
-		RuneLite.main(args);
-	}
+    public NoPermutationException(String message)
+    {
+        super(message);
+    }
 }
