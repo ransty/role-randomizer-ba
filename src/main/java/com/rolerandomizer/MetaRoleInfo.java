@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MetaRoleInfo
 {
-	MAIN_ATTACKER("Main attacker", BaRole.ATTACKER, ImmutableSet.of("m", "(?<!2)a")),
-	SECOND_ATTACKER("2nd attacker", BaRole.ATTACKER, ImmutableSet.of("2", "2a", "a")),
-	HEALER("Healer", BaRole.HEALER, ImmutableSet.of("h")),
-	COLLECTOR("Collector", BaRole.COLLECTOR, ImmutableSet.of("c")),
-	DEFENDER("Defender", BaRole.DEFENDER, ImmutableSet.of("d"));
+	MAIN_ATTACKER("Main attacker", "m", BaRole.ATTACKER, ImmutableSet.of("m", "(?<!2)a")),
+	SECOND_ATTACKER("2nd attacker", "2", BaRole.ATTACKER, ImmutableSet.of("2", "2a", "a")),
+	HEALER("Healer", "h", BaRole.HEALER, ImmutableSet.of("h")),
+	COLLECTOR("Collector", "c", BaRole.COLLECTOR, ImmutableSet.of("c")),
+	DEFENDER("Defender", "d", BaRole.DEFENDER, ImmutableSet.of("d"));
 
 	// one or more of any of the possible matches, separated by slashes
 	public static final String SLASH_SEPARATED_MATCHER;
@@ -37,7 +37,9 @@ public enum MetaRoleInfo
 	}
 
 	@Getter
-	private final String displayName;
+	private final String fullName;
+	@Getter
+	private final String shortName;
 	@Getter
 	private final BaRole role;
 	@Getter
