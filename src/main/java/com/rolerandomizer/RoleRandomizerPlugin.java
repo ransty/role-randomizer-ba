@@ -25,11 +25,12 @@
 package com.rolerandomizer;
 
 import com.google.inject.Provides;
-import javax.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.CommandExecuted;
@@ -41,12 +42,14 @@ import net.runelite.client.util.ColorUtil;
 
 @Slf4j
 @PluginDescriptor(
-		name = "BA Role Randomizer"
+	name = "BA Role Randomizer"
 )
 public class RoleRandomizerPlugin extends Plugin
 {
 	@Inject
 	private Client client;
+
+	private final RoleParser parser = new RoleParser();
 
 	private RoleRandomizer randomizer;
 
@@ -77,7 +80,7 @@ public class RoleRandomizerPlugin extends Plugin
 	public String buildPrefsPrint()
 	{
 		String prefs = "";
-		prefs += nounCapitalize(usernames.get(0)) + " "	+ stripArrayExtras(player1Prefs) + "  ";
+		prefs += nounCapitalize(usernames.get(0)) + " " + stripArrayExtras(player1Prefs) + "  ";
 		prefs += nounCapitalize(usernames.get(1)) + " " + stripArrayExtras(player2Prefs) + "  ";
 		prefs += nounCapitalize(usernames.get(2)) + " " + stripArrayExtras(player3Prefs) + "  ";
 		prefs += nounCapitalize(usernames.get(3)) + " " + stripArrayExtras(player4Prefs) + "  ";
@@ -87,18 +90,9 @@ public class RoleRandomizerPlugin extends Plugin
 
 	public String stripArrayExtras(String[] array)
 	{
-		if (Arrays.toString(array).equals("fill"))
-		{
-			return nounCapitalize(Arrays.toString(array));
-		}
-		else
-		{
-			return Arrays.toString(array)
-					.replace(",", "")
-					.replace("[", "")
-					.replace("]", "")
-					.trim();
-		}
+		return String.join("", array)
+			.replace("m2hcd", "fill")
+			.replace("m2", "a");
 	}
 
 	@Subscribe
@@ -107,79 +101,79 @@ public class RoleRandomizerPlugin extends Plugin
 		if (commandExecuted.getCommand().equals("prefs") && randomizer.isPreferencesSet())
 		{
 			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					buildPrefsPrint(),
-			null
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				buildPrefsPrint(),
+				null
 			);
 		}
 
 		if (commandExecuted.getCommand().equals("r"))
 		{
-			if (commandExecuted.getArguments().length == 10)
+			// first determine which player prefers which role
+			List<PlayerPrefs> prefs = parser.parse(Arrays.asList(commandExecuted.getArguments()));
+			if (prefs.size() == 5)
 			{
-				setUsernames(commandExecuted.getArguments());
-				collectPreferences(commandExecuted.getArguments());
-				setAllPreferences();
+				setUsernames(prefs);
+				collectPreferences(prefs);
+				setAllPreferences(prefs);
 				teamRoles = generateRandom();
 				client.addChatMessage(
-						ChatMessageType.GAMEMESSAGE,
-						"",
-						teamRoles,
-						null
+					ChatMessageType.GAMEMESSAGE,
+					"",
+					teamRoles,
+					null
 				);
 			}
 		}
 
 		if (commandExecuted.getCommand().equals("prevr") && !teamRoles.isEmpty())
 		{
-			 client.addChatMessage(
-			 		ChatMessageType.GAMEMESSAGE,
-					 "",
-					 teamRoles,
-					 null
-			 );
+			client.addChatMessage(
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				teamRoles,
+				null
+			);
 		}
 
 		if (commandExecuted.getCommand().equals("rr") && !teamRoles.isEmpty())
 		{
 			teamRoles = generateRandom();
 			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					teamRoles,
-					null
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				teamRoles,
+				null
 			);
 		}
 	}
 
-	private void setUsernames(String[] commandArgs)
+	private void setUsernames(List<PlayerPrefs> prefs)
 	{
-		usernames.put(0, commandArgs[0]);
-		usernames.put(1, commandArgs[2]);
-		usernames.put(2, commandArgs[4]);
-		usernames.put(3, commandArgs[6]);
-		usernames.put(4, commandArgs[8]);
+		for (int i = 0; i < prefs.size(); i++)
+		{
+			usernames.put(i, prefs.get(i).getName());
+		}
 		randomizer.setUsernames(usernames);
 	}
 
-	private void collectPreferences(String[] commandArgs)
+	private void collectPreferences(List<PlayerPrefs> prefs)
 	{
-		String regex = "[^a-zA-Z0-9]";
-		player1Prefs = new String[]{commandArgs[1].replaceAll(regex, "")};
-		player2Prefs = new String[]{commandArgs[3].replaceAll(regex, "")};
-		player3Prefs = new String[]{commandArgs[5].replaceAll(regex, "")};
-		player4Prefs = new String[]{commandArgs[7].replaceAll(regex, "")};
-		player5Prefs = new String[]{commandArgs[9].replaceAll(regex, "")};
+		player1Prefs = prefs.get(0).getPrefs().stream().map(MetaRoleInfo::getShortName).toArray(String[]::new);
+		player2Prefs = prefs.get(1).getPrefs().stream().map(MetaRoleInfo::getShortName).toArray(String[]::new);
+		player3Prefs = prefs.get(2).getPrefs().stream().map(MetaRoleInfo::getShortName).toArray(String[]::new);
+		player4Prefs = prefs.get(3).getPrefs().stream().map(MetaRoleInfo::getShortName).toArray(String[]::new);
+		player5Prefs = prefs.get(4).getPrefs().stream().map(MetaRoleInfo::getShortName).toArray(String[]::new);
 	}
 
-	private void setAllPreferences()
+	private void setAllPreferences(List<PlayerPrefs> prefs)
 	{
-		randomizer.setPlayerOnePreferences(convertPreferences(player1Prefs));
-		randomizer.setPlayerTwoPreferences(convertPreferences(player2Prefs));
-		randomizer.setPlayerThreePreferences(convertPreferences(player3Prefs));
-		randomizer.setPlayerFourPreferences(convertPreferences(player4Prefs));
-		randomizer.setPlayerFivePreferences(convertPreferences(player5Prefs));
+		randomizer.setPlayerOnePreferences(convertPreferences(prefs.get(0).getPrefs()));
+		randomizer.setPlayerTwoPreferences(convertPreferences(prefs.get(1).getPrefs()));
+		randomizer.setPlayerThreePreferences(convertPreferences(prefs.get(2).getPrefs()));
+		randomizer.setPlayerFourPreferences(convertPreferences(prefs.get(3).getPrefs()));
+		randomizer.setPlayerFivePreferences(convertPreferences(prefs.get(4).getPrefs()));
 	}
 
 	private String generateRandom() throws Exception
@@ -188,31 +182,31 @@ public class RoleRandomizerPlugin extends Plugin
 		StringBuilder shortFormRoles = new StringBuilder();
 		for (int index = 0; index < 5; index++)
 		{
-			switch(index)
+			switch (index)
 			{
 				case 0:
 				case 1:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							nounCapitalize(roles[index]),
-							Color.RED.darker())).append(" / "
+						nounCapitalize(roles[index]),
+						Color.RED.darker())).append(" / "
 					);
 					break;
 				case 2:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							nounCapitalize(roles[index]),
-							Color.GREEN.darker().darker())).append(" / "
+						nounCapitalize(roles[index]),
+						Color.GREEN.darker().darker())).append(" / "
 					);
 					break;
 				case 3:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							nounCapitalize(roles[index]),
-							Color.YELLOW)).append(" / "
+						nounCapitalize(roles[index]),
+						Color.YELLOW)).append(" / "
 					);
 					break;
 				case 4:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
-							nounCapitalize(roles[index]),
-							Color.BLUE.darker())
+						nounCapitalize(roles[index]),
+						Color.BLUE.darker())
 					);
 					break;
 			}
@@ -220,45 +214,19 @@ public class RoleRandomizerPlugin extends Plugin
 		return shortFormRoles.toString();
 	}
 
-	private String nounCapitalize(String noun) {
+	private String nounCapitalize(String noun)
+	{
 		return noun.substring(0, 1).toUpperCase() + noun.substring(1);
 	}
 
-	private int[] convertPreferences(String[] prefs)
+	public int[] convertPreferences(List<MetaRoleInfo> prefs)
 	{
-		int[] newPrefs = {0, 0, 0, 0, 0};
-		for (String s : prefs) {
-			if (s.equals("fill"))
-			{
-				return new int[]{1, 1, 1, 1, 1};
-			}
-			for (int i = 0; i < s.length(); i++)
-			{
-				char c = s.charAt(i);
-				switch (c) {
-					case 'a':
-						newPrefs[0] = 1;
-						newPrefs[1] = 1;
-						break;
-					case 'm':
-						newPrefs[0] = 1;
-						break;
-					case '2':
-						newPrefs[1] = 1;
-						break;
-					case 'h':
-						newPrefs[2] = 1;
-						break;
-					case 'c':
-						newPrefs[3] = 1;
-						break;
-					case 'd':
-						newPrefs[4] = 1;
-						break;
-				}
-			}
+		int[] result = {0, 0, 0, 0, 0};
+		for (MetaRoleInfo pref : prefs)
+		{
+			result[pref.ordinal()] = 1;
 		}
-		return newPrefs;
+		return result;
 	}
 
 	@Provides
