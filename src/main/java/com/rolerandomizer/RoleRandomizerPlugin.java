@@ -25,11 +25,20 @@
 package com.rolerandomizer;
 
 import com.google.inject.Provides;
-import java.awt.Color;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+
+import com.rolerandomizer.ui.RoleRandomizerPluginPanel;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -38,7 +47,10 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ColorUtil;
+import net.runelite.client.util.ImageUtil;
+import net.runelite.client.ui.ClientToolbar;
 
 @Slf4j
 @PluginDescriptor(
@@ -60,6 +72,11 @@ public class RoleRandomizerPlugin extends Plugin
 	private String[] player5Prefs;
 	private HashMap<Integer, String> usernames;
 
+	private NavigationButton navButton;
+
+	@Inject
+	private ClientToolbar clientToolbar;
+
 	private String teamRoles;
 
 	@Override
@@ -67,6 +84,19 @@ public class RoleRandomizerPlugin extends Plugin
 	{
 		randomizer = new RoleRandomizer();
 		usernames = new HashMap<>();
+
+		RoleRandomizerPluginPanel panel = new RoleRandomizerPluginPanel();
+
+		// TODO: Work out why this line isn't working
+		BufferedImage icon = ImageUtil.loadImageResource(getClass(), "icon.png");
+		navButton = NavigationButton.builder()
+				.tooltip("BA Role Randomizer")
+				.priority(9)
+				.icon(icon)
+				.panel(panel)
+				.build();
+		clientToolbar.addNavigation(navButton);
+
 	}
 
 	@Override
@@ -115,8 +145,10 @@ public class RoleRandomizerPlugin extends Plugin
 			if (prefs.size() == 5)
 			{
 				setUsernames(prefs);
-				collectPreferences(prefs);
-				setAllPreferences(prefs);
+				if (!randomizer.isPreferencesSet()) {
+					collectPreferences(prefs);
+					setAllPreferences(prefs);
+				}
 				teamRoles = generateRandom();
 				client.addChatMessage(
 					ChatMessageType.GAMEMESSAGE,
@@ -190,24 +222,44 @@ public class RoleRandomizerPlugin extends Plugin
 						nounCapitalize(roles[index]),
 						Color.RED.darker())).append(" / "
 					);
+					for (Map.Entry<Integer, String> entry: randomizer.usernames.entrySet()) {
+						if (entry.getValue() == roles[index]) {
+							randomizer.popPreference(entry.getKey(), index);
+						}
+					}
 					break;
 				case 2:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 						nounCapitalize(roles[index]),
 						Color.GREEN.darker().darker())).append(" / "
 					);
+					for (Map.Entry<Integer, String> entry: randomizer.usernames.entrySet()) {
+						if (entry.getValue() == roles[index]) {
+							randomizer.popPreference(entry.getKey(), index);
+						}
+					}
 					break;
 				case 3:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 						nounCapitalize(roles[index]),
 						Color.YELLOW)).append(" / "
 					);
+					for (Map.Entry<Integer, String> entry: randomizer.usernames.entrySet()) {
+						if (entry.getValue() == roles[index]) {
+							randomizer.popPreference(entry.getKey(), index);
+						}
+					}
 					break;
 				case 4:
 					shortFormRoles.append(ColorUtil.wrapWithColorTag(
 						nounCapitalize(roles[index]),
 						Color.BLUE.darker())
 					);
+					for (Map.Entry<Integer, String> entry: randomizer.usernames.entrySet()) {
+						if (entry.getValue() == roles[index]) {
+							randomizer.popPreference(entry.getKey(), index);
+						}
+					}
 					break;
 			}
 		}

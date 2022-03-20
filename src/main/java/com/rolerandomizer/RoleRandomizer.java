@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Keano Porcaro <keano@ransty.com>
+ * Copyright (c) 2021-2022, Keano Porcaro <keano@ransty.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -170,6 +170,20 @@ public class RoleRandomizer
             roles[ints[i]] = usernames.get(i);
         }
         return roles;
+    }
+
+    public void popPreference(Integer key, int role) {
+        if (key == 0) {
+            playerOnePreferences[role] = 0;
+        } else if (key == 1) {
+            playerTwoPreferences[role] = 0;
+        } else if (key == 2) {
+            playerThreePreferences[role] = 0;
+        } else if (key == 3) {
+            playerFourPreferences[role] = 0;
+        } else if (key == 4) {
+            playerFivePreferences[role] = 0;
+        }
     }
 }
 

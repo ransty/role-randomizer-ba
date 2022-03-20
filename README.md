@@ -11,8 +11,6 @@ _Based on the Bab discord bot_
 ``::prefs`` (shows previously entered preferences from the ``::r`` command)
 
 
-
-
 ## Examples
 ``::r``
 
@@ -28,4 +26,9 @@ _Based on the Bab discord bot_
 ## TODO:
 - Not having to specify 'fill' should give the prefs of fill for the player
 - Leech mode (or for that fact, any "mode")
+
+---
+## Changelog v2.0.0
+* Added user interface to randomize roles instead of commandline
+* Now automatically removes previous roles that have been played already!
 

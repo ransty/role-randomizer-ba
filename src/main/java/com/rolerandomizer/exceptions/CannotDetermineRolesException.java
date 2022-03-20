@@ -1,4 +1,4 @@
-package com.rolerandomizer;
+package com.rolerandomizer.exceptions;
 
 public class CannotDetermineRolesException extends Exception
 {
