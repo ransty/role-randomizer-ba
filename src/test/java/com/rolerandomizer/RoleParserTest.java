@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.rolerandomizer.exceptions.CannotDetermineRolesException;
+import com.rolerandomizer.exceptions.CannotParseArgException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

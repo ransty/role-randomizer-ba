@@ -1,5 +1,8 @@
 package com.rolerandomizer;
 
+import com.rolerandomizer.exceptions.CannotDetermineRolesException;
+import com.rolerandomizer.exceptions.CannotParseArgException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
