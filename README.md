@@ -21,8 +21,13 @@ _Based on the Bab discord bot_
 ![prefs example](https://media0.giphy.com/media/gqlMiZ7TmErK1X9Tov/giphy.gif)
 
 ``::prevr and ::rr``
-
 ![new commands](https://media2.giphy.com/media/VldmR7ubX8hrmBH0RW/giphy.gif)
+
+v2.0.1 User interface
+---
+
+![user interface](https://media3.giphy.com/media/iYDzdsSe5FabJdyGbF/giphy.gif?cid=790b7611413273860b1de689549686a97bb87409a135bd60&rid=giphy.gif&ct=g)
+
 ## TODO:
 - Not having to specify 'fill' should give the prefs of fill for the player
 - Leech mode (or for that fact, any "mode")
