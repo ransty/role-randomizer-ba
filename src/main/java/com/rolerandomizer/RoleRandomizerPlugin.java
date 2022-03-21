@@ -87,7 +87,6 @@ public class RoleRandomizerPlugin extends Plugin
 
 		RoleRandomizerPluginPanel panel = new RoleRandomizerPluginPanel();
 
-		// TODO: Work out why this line isn't working
 		BufferedImage icon = ImageUtil.loadImageResource(RoleRandomizerPlugin.class, "icon.png");
 		navButton = NavigationButton.builder()
 				.tooltip("BA Role Randomizer")
