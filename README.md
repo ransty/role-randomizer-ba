@@ -28,7 +28,10 @@ _Based on the Bab discord bot_
 - Leech mode (or for that fact, any "mode")
 
 ---
-## Changelog v2.0.0
+## Changelog
+v2.0.0
 * Added user interface to randomize roles instead of commandline
 * Now automatically removes previous roles that have been played already!
 
+v2.0.1
+* Checkboxes instead of text input for player preferences
