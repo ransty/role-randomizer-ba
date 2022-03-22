@@ -103,6 +103,9 @@ public class RoleRandomizerPlugin extends Plugin
 	{
 		usernames = null;
 		randomizer = null;
+
+		clientToolbar.removeNavigation(navButton);
+
 		log.debug("Shutting down BA role randomizer plugin");
 	}
 
