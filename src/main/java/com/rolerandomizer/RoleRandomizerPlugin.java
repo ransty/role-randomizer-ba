@@ -28,14 +28,10 @@ import com.google.inject.Provides;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 
 import com.rolerandomizer.ui.RoleRandomizerPluginPanel;
@@ -85,7 +81,7 @@ public class RoleRandomizerPlugin extends Plugin
 		randomizer = new RoleRandomizer();
 		usernames = new HashMap<>();
 
-		RoleRandomizerPluginPanel panel = new RoleRandomizerPluginPanel();
+		RoleRandomizerPluginPanel panel = new RoleRandomizerPluginPanel(client);
 
 		BufferedImage icon = ImageUtil.loadImageResource(RoleRandomizerPlugin.class, "icon.png");
 		navButton = NavigationButton.builder()

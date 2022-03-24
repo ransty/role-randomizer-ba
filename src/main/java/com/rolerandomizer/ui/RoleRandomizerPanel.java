@@ -1,15 +1,14 @@
 package com.rolerandomizer.ui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
@@ -44,17 +43,32 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private RoleRandomizer rr;
 
+    private Client client;
 
     private JButton roleRandomizerButton;
 
-        protected RoleRandomizerPanel(RoleRandomizerPluginPanel panel)
+        protected RoleRandomizerPanel(Client client, RoleRandomizerPluginPanel panel)
         {
             super();
 
             this.panel = panel;
+            this.client = client;
 
             setLayout(new GridLayout(6, 2, 7, 7));
             uiFieldPlayer1 = addComponent("Player 1");
+            uiFieldPlayer1.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                        uiFieldPlayer1.setText(client.getLocalPlayer().getName());
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+
+                }
+            });
             uiFieldPlayer1Preferences = generatePlayerPreferences();
             uiFieldPlayer1Preferences[5].addActionListener(new ActionListener() {
                 @Override

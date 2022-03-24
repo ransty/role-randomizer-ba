@@ -26,6 +26,7 @@ package com.rolerandomizer.ui;
 
 import java.awt.*;
 
+import net.runelite.api.Client;
 import net.runelite.client.ui.PluginPanel;
 
 public class RoleRandomizerPluginPanel extends PluginPanel
@@ -33,12 +34,13 @@ public class RoleRandomizerPluginPanel extends PluginPanel
 
         public RandomizeResultPanel resultPanel;
         public RoleRandomizerPanel inputPanel;
+        private boolean active = false;
 
-        public RoleRandomizerPluginPanel()
+    public RoleRandomizerPluginPanel(Client client)
         {
             super();
 
-            inputPanel = new RoleRandomizerPanel(this);
+            inputPanel = new RoleRandomizerPanel(client,this);
 
             setLayout(new BorderLayout(5, 10));
 
@@ -47,5 +49,4 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             add(inputPanel, BorderLayout.CENTER);
             add(resultPanel, BorderLayout.SOUTH);
         }
-
 }
