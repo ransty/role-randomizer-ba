@@ -40,6 +40,7 @@ v2.0.2
 * Reset button now disabled until first random is run
 * Clear button added clean the state completely
 * Fill unchecks itself if it detects other boxes have been unchecked (and vise versa)
+* UI pushes a GameMessage to the players chat if the config option is turned on in settings
 
 v2.0.1
 * Checkboxes instead of text input for player preferences
