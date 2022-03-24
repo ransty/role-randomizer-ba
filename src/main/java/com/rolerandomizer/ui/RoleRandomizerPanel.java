@@ -19,16 +19,16 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         private final RoleRandomizerPluginPanel panel;
 
-    public final JTextField uiFieldPlayer1;
-    public final JCheckBox[] uiFieldPlayer1Preferences;
-    public final JTextField uiFieldPlayer2;
-    public final JCheckBox[] uiFieldPlayer2Preferences;
-    public final JTextField uiFieldPlayer3;
-    public final JCheckBox[] uiFieldPlayer3Preferences;
-    public final JTextField uiFieldPlayer4;
-    public final JCheckBox[] uiFieldPlayer4Preferences;
-    public final JTextField uiFieldPlayer5;
-    public final JCheckBox[] uiFieldPlayer5Preferences;
+    public JTextField uiFieldPlayer1;
+    public JCheckBox[] uiFieldPlayer1Preferences;
+    public JTextField uiFieldPlayer2;
+    public JCheckBox[] uiFieldPlayer2Preferences;
+    public JTextField uiFieldPlayer3;
+    public JCheckBox[] uiFieldPlayer3Preferences;
+    public JTextField uiFieldPlayer4;
+    public JCheckBox[] uiFieldPlayer4Preferences;
+    public JTextField uiFieldPlayer5;
+    public JCheckBox[] uiFieldPlayer5Preferences;
 
     public boolean[] initialPlayer1Preferences;
     public boolean isInitialPlayer1PreferencesSet;
@@ -46,6 +46,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     private Client client;
 
     private JButton roleRandomizerButton;
+    private JButton resetButton;
 
         protected RoleRandomizerPanel(Client client, RoleRandomizerPluginPanel panel)
         {
@@ -70,64 +71,78 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                 }
             });
             uiFieldPlayer1Preferences = generatePlayerPreferences();
-            uiFieldPlayer1Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer1Preferences, uiFieldPlayer1Preferences[5]);
-                }
-            });
+            addFillListener(uiFieldPlayer1Preferences);
             initialPlayer1Preferences = new boolean[6];
             isInitialPlayer1PreferencesSet = false;
+            addCheckFillListener(uiFieldPlayer1Preferences);
 
             uiFieldPlayer2 = addComponent("Player 2");
             uiFieldPlayer2Preferences = generatePlayerPreferences();
-            uiFieldPlayer2Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer2Preferences, uiFieldPlayer2Preferences[5]);
-                }
-            });
+            addFillListener(uiFieldPlayer2Preferences);
             initialPlayer2Preferences = new boolean[6];
             isInitialPlayer2PreferencesSet = false;
+            addCheckFillListener(uiFieldPlayer2Preferences);
 
             uiFieldPlayer3 = addComponent("Player 3");
             uiFieldPlayer3Preferences = generatePlayerPreferences();
-            uiFieldPlayer3Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer3Preferences, uiFieldPlayer3Preferences[5]);
-                }
-            });
+            addFillListener(uiFieldPlayer3Preferences);
             initialPlayer3Preferences = new boolean[6];
             isInitialPlayer3PreferencesSet = false;
+            addCheckFillListener(uiFieldPlayer3Preferences);
 
             uiFieldPlayer4 = addComponent("Player 4");
             uiFieldPlayer4Preferences = generatePlayerPreferences();
-            uiFieldPlayer4Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer4Preferences, uiFieldPlayer4Preferences[5]);
-                }
-            });
+            addFillListener(uiFieldPlayer4Preferences);
             initialPlayer4Preferences = new boolean[6];
             isInitialPlayer4PreferencesSet = false;
+            addCheckFillListener(uiFieldPlayer4Preferences);
 
             uiFieldPlayer5 = addComponent("Player 5");
             uiFieldPlayer5Preferences = generatePlayerPreferences();
-            uiFieldPlayer5Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer5Preferences, uiFieldPlayer5Preferences[5]);
-                }
-            });
+            addFillListener(uiFieldPlayer5Preferences);
             initialPlayer5Preferences = new boolean[6];
             isInitialPlayer5PreferencesSet = false;
+            addCheckFillListener(uiFieldPlayer5Preferences);
 
-            addResetButtonComponent("Reset");
+            resetButton = addResetButtonComponent("Reset");
             addButtonComponent("Randomize!");
 
             rr = new RoleRandomizer();
+        }
 
+    private void addFillListener(JCheckBox[] pPreferences) {
+            pPreferences[5].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    flipCheckboxes(pPreferences, pPreferences[5]);
+                }
+            });
+        }
+
+        private void addCheckFillListener(JCheckBox[] playerPreferences) {
+            for (int i = 0; i < playerPreferences.length - 1; i++) {
+                playerPreferences[i].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (playerPreferences[5].isSelected()) {
+                            playerPreferences[5].setSelected(false);
+                        } else {
+                            int isFill = 0;
+                            for (int box = 0; box < playerPreferences.length - 1; box++) {
+                                if (!playerPreferences[box].isSelected()) {
+                                    break;
+                                } else {
+                                    isFill++;
+                                }
+                            }
+
+                            if (isFill == 5) {
+                                playerPreferences[5].setSelected(true);
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         private void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
@@ -230,16 +245,17 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         return uiInput.getTextField();
     }
 
-    private void addResetButtonComponent(String label)
+    private JButton addResetButtonComponent(String label)
     {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
         JButton resetButton = new JButton(label);
 
-        resetButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        resetButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
         resetButton.setBorder(new EmptyBorder(5, 7, 5, 7));
         resetButton.setToolTipText("This resets preferences!");
+        resetButton.setEnabled(false);
 
         resetButton.addKeyListener(new KeyListener() {
             @Override
@@ -273,6 +289,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         container.add(resetButton, BorderLayout.CENTER);
         add(container, BorderLayout.NORTH);
+
+        return resetButton;
     }
 
     private void resetPlayerPreferences(JCheckBox[] prefs, boolean[] initial) {
@@ -296,6 +314,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         rr.playerThreePreferences = null;
         rr.playerFourPreferences = null;
         rr.playerFivePreferences = null;
+
+        resetButton.setEnabled(false);
 
     }
 
@@ -399,6 +419,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             isInitialPlayer5PreferencesSet = true;
         }
         rr.setPlayerFivePreferences(setPreferences(uiFieldPlayer5Preferences));
+
+        resetButton.setEnabled(true);
     }
 
     public void randomize() {

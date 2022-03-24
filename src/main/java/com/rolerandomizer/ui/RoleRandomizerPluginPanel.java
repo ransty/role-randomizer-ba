@@ -27,7 +27,11 @@ package com.rolerandomizer.ui;
 import java.awt.*;
 
 import net.runelite.api.Client;
+import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class RoleRandomizerPluginPanel extends PluginPanel
 {
@@ -46,7 +50,13 @@ public class RoleRandomizerPluginPanel extends PluginPanel
 
             resultPanel = new RandomizeResultPanel(this);
 
-            add(inputPanel, BorderLayout.CENTER);
-            add(resultPanel, BorderLayout.SOUTH);
+            JButton clearButton = new JButton("Clear");
+            clearButton.setBackground(ColorScheme.PROGRESS_ERROR_COLOR);
+            clearButton.setBorder(new EmptyBorder(5, 7, 5, 7));
+            clearButton.setToolTipText("This wipes the slate clean!");
+
+            add(inputPanel, BorderLayout.NORTH);
+            add(resultPanel, BorderLayout.CENTER);
+            add(clearButton, BorderLayout.SOUTH);
         }
 }
