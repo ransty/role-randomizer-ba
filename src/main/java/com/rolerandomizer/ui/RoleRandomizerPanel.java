@@ -1,35 +1,40 @@
 package com.rolerandomizer.ui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
+import com.rolerandomizer.RoleRandomizerConfig;
+import net.runelite.api.ChatMessageType;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
 
 import com.rolerandomizer.RoleRandomizer;
+import net.runelite.client.util.ColorUtil;
 
 public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
+
         private final RoleRandomizerPluginPanel panel;
 
-    public final JTextField uiFieldPlayer1;
-    public final JCheckBox[] uiFieldPlayer1Preferences;
-    public final JTextField uiFieldPlayer2;
-    public final JCheckBox[] uiFieldPlayer2Preferences;
-    public final JTextField uiFieldPlayer3;
-    public final JCheckBox[] uiFieldPlayer3Preferences;
-    public final JTextField uiFieldPlayer4;
-    public final JCheckBox[] uiFieldPlayer4Preferences;
-    public final JTextField uiFieldPlayer5;
-    public final JCheckBox[] uiFieldPlayer5Preferences;
+    public JTextField uiFieldPlayer1;
+    public JCheckBox[] uiFieldPlayer1Preferences;
+    public JTextField uiFieldPlayer2;
+    public JCheckBox[] uiFieldPlayer2Preferences;
+    public JTextField uiFieldPlayer3;
+    public JCheckBox[] uiFieldPlayer3Preferences;
+    public JTextField uiFieldPlayer4;
+    public JCheckBox[] uiFieldPlayer4Preferences;
+    public JTextField uiFieldPlayer5;
+    public JCheckBox[] uiFieldPlayer5Preferences;
 
     public boolean[] initialPlayer1Preferences;
     public boolean isInitialPlayer1PreferencesSet;
@@ -44,76 +49,52 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private RoleRandomizer rr;
 
+    private Client client;
+    private RoleRandomizerConfig config;
+    private final ChatMessageManager chatMessageManager;
 
     private JButton roleRandomizerButton;
+    private JButton resetButton;
 
-        protected RoleRandomizerPanel(RoleRandomizerPluginPanel panel)
+        protected RoleRandomizerPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager, RoleRandomizerPluginPanel panel)
         {
             super();
 
             this.panel = panel;
+            this.client = client;
+            this.config = config;
+            this.chatMessageManager = chatMessageManager;
 
             setLayout(new GridLayout(6, 2, 7, 7));
-            uiFieldPlayer1 = addComponent("Player 1");
-            uiFieldPlayer1Preferences = generatePlayerPreferences();
-            uiFieldPlayer1Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer1Preferences, uiFieldPlayer1Preferences[5]);
-                }
-            });
-            initialPlayer1Preferences = new boolean[6];
-            isInitialPlayer1PreferencesSet = false;
 
-            uiFieldPlayer2 = addComponent("Player 2");
-            uiFieldPlayer2Preferences = generatePlayerPreferences();
-            uiFieldPlayer2Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer2Preferences, uiFieldPlayer2Preferences[5]);
-                }
-            });
-            initialPlayer2Preferences = new boolean[6];
-            isInitialPlayer2PreferencesSet = false;
+            initializeComponents();
+        }
 
-            uiFieldPlayer3 = addComponent("Player 3");
-            uiFieldPlayer3Preferences = generatePlayerPreferences();
-            uiFieldPlayer3Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer3Preferences, uiFieldPlayer3Preferences[5]);
-                }
-            });
-            initialPlayer3Preferences = new boolean[6];
-            isInitialPlayer3PreferencesSet = false;
+    private void addFillListener(JCheckBox[] pPreferences) {
+            pPreferences[5].addActionListener(e -> flipCheckboxes(pPreferences, pPreferences[5]));
+        }
 
-            uiFieldPlayer4 = addComponent("Player 4");
-            uiFieldPlayer4Preferences = generatePlayerPreferences();
-            uiFieldPlayer4Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer4Preferences, uiFieldPlayer4Preferences[5]);
-                }
-            });
-            initialPlayer4Preferences = new boolean[6];
-            isInitialPlayer4PreferencesSet = false;
+        private void addCheckFillListener(JCheckBox[] playerPreferences) {
+            for (int i = 0; i < playerPreferences.length - 1; i++) {
+                playerPreferences[i].addActionListener(e -> {
+                    if (playerPreferences[5].isSelected()) {
+                        playerPreferences[5].setSelected(false);
+                    } else {
+                        int isFill = 0;
+                        for (int box = 0; box < playerPreferences.length - 1; box++) {
+                            if (!playerPreferences[box].isSelected()) {
+                                break;
+                            } else {
+                                isFill++;
+                            }
+                        }
 
-            uiFieldPlayer5 = addComponent("Player 5");
-            uiFieldPlayer5Preferences = generatePlayerPreferences();
-            uiFieldPlayer5Preferences[5].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    flipCheckboxes(uiFieldPlayer5Preferences, uiFieldPlayer5Preferences[5]);
-                }
-            });
-            initialPlayer5Preferences = new boolean[6];
-            isInitialPlayer5PreferencesSet = false;
-
-            addResetButtonComponent("Reset");
-            addButtonComponent("Randomize!");
-
-            rr = new RoleRandomizer();
-
+                        if (isFill == 5) {
+                            playerPreferences[5].setSelected(true);
+                        }
+                    }
+                });
+            }
         }
 
         private void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
@@ -216,16 +197,17 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         return uiInput.getTextField();
     }
 
-    private void addResetButtonComponent(String label)
+    private JButton addResetButtonComponent(String label)
     {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
         JButton resetButton = new JButton(label);
 
-        resetButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        resetButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
         resetButton.setBorder(new EmptyBorder(5, 7, 5, 7));
         resetButton.setToolTipText("This resets preferences!");
+        resetButton.setEnabled(false);
 
         resetButton.addKeyListener(new KeyListener() {
             @Override
@@ -250,15 +232,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             }
         });
 
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetPreferences();
-            }
-        });
+        resetButton.addActionListener(e -> resetPreferences());
 
         container.add(resetButton, BorderLayout.CENTER);
         add(container, BorderLayout.NORTH);
+
+        return resetButton;
     }
 
     private void resetPlayerPreferences(JCheckBox[] prefs, boolean[] initial) {
@@ -282,6 +261,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         rr.playerThreePreferences = null;
         rr.playerFourPreferences = null;
         rr.playerFivePreferences = null;
+
+        resetButton.setEnabled(false);
 
     }
 
@@ -385,6 +366,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             isInitialPlayer5PreferencesSet = true;
         }
         rr.setPlayerFivePreferences(setPreferences(uiFieldPlayer5Preferences));
+
+        resetButton.setEnabled(true);
     }
 
     public void randomize() {
@@ -403,12 +386,21 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         try {
             String[] roles = rr.randomize();
 
+            StringBuilder shortFormRoles = new StringBuilder();
+
             for (int index = 0; index < 5; index++) {
                     switch (index) {
                         case 0:
                             panel.resultPanel.roleRandomizerResultField.insert(" Main\t" + roles[index] + "\n", 1);
+                            if (config.sendToChatBox()) {
+                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                    shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
+                                            Color.RED.darker())).append(" / "
+                                    );
+                                }
+                            }
                             for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (entry.getValue() == roles[index]) {
+                                if (Objects.equals(entry.getValue(), roles[index])) {
                                     rr.popPreference(entry.getKey(), index);
                                     uncheckPreference(roles[index], index);
                                 }
@@ -416,8 +408,15 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                             break;
                         case 1:
                             panel.resultPanel.roleRandomizerResultField.append(" Second\t" + roles[index] + "\n");
+                            if (config.sendToChatBox()) {
+                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                    shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
+                                            Color.RED.darker())).append(" / "
+                                    );
+                                }
+                            }
                             for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (entry.getValue() == roles[index]) {
+                                if (Objects.equals(entry.getValue(), roles[index])) {
                                     rr.popPreference(entry.getKey(), index);
                                     uncheckPreference(roles[index], index);
                                 }
@@ -425,8 +424,16 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                             break;
                         case 2:
                             panel.resultPanel.roleRandomizerResultField.append(" Healer\t" + roles[index] + "\n");
+                            if (config.sendToChatBox()) {
+                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                            (roles[index]),
+                                            Color.GREEN.darker().darker())).append(" / "
+                                    );
+                                }
+                            }
                             for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (entry.getValue() == roles[index]) {
+                                if (Objects.equals(entry.getValue(), roles[index])) {
                                     rr.popPreference(entry.getKey(), index);
                                     uncheckPreference(roles[index], index);
                                 }
@@ -434,8 +441,16 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                             break;
                         case 3:
                             panel.resultPanel.roleRandomizerResultField.append(" Collector\t" + roles[index] + "\n");
+                            if (config.sendToChatBox()) {
+                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                            (roles[index]),
+                                            Color.YELLOW)).append(" / "
+                                    );
+                                }
+                            }
                             for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (entry.getValue() == roles[index]) {
+                                if (Objects.equals(entry.getValue(), roles[index])) {
                                     rr.popPreference(entry.getKey(), index);
                                     uncheckPreference(roles[index], index);
                                 }
@@ -443,14 +458,33 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                             break;
                         case 4:
                             panel.resultPanel.roleRandomizerResultField.append(" Defender\t" + roles[index]);
+                            if (config.sendToChatBox()) {
+                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                            (roles[index]),
+                                            Color.BLUE.darker())
+                                    );
+                                }
+                            }
                             for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (entry.getValue() == roles[index]) {
+                                if (Objects.equals(entry.getValue(), roles[index])) {
                                     rr.popPreference(entry.getKey(), index);
                                     uncheckPreference(roles[index], index);
                                 }
                             }
                             break;
                     }
+            }
+
+            if (config.sendToChatBox()) {
+                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                    chatMessageManager.queue(
+                            QueuedMessage.builder()
+                                    .type(ChatMessageType.GAMEMESSAGE)
+                                    .runeLiteFormattedMessage(shortFormRoles.toString())
+                                    .build()
+                    );
+                }
             }
 
         } catch (Exception ex) {
@@ -490,5 +524,95 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
             randomize();
+    }
+
+    private void initializeComponents() {
+        uiFieldPlayer1 = addComponent("Player 1");
+        uiFieldPlayer1.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                    uiFieldPlayer1.setText(Objects.requireNonNull(client.getLocalPlayer()).getName());
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+
+            }
+        });
+        uiFieldPlayer1Preferences = generatePlayerPreferences();
+        addFillListener(uiFieldPlayer1Preferences);
+        initialPlayer1Preferences = new boolean[6];
+        isInitialPlayer1PreferencesSet = false;
+        addCheckFillListener(uiFieldPlayer1Preferences);
+
+        uiFieldPlayer2 = addComponent("Player 2");
+        uiFieldPlayer2Preferences = generatePlayerPreferences();
+        addFillListener(uiFieldPlayer2Preferences);
+        initialPlayer2Preferences = new boolean[6];
+        isInitialPlayer2PreferencesSet = false;
+        addCheckFillListener(uiFieldPlayer2Preferences);
+
+        uiFieldPlayer3 = addComponent("Player 3");
+        uiFieldPlayer3Preferences = generatePlayerPreferences();
+        addFillListener(uiFieldPlayer3Preferences);
+        initialPlayer3Preferences = new boolean[6];
+        isInitialPlayer3PreferencesSet = false;
+        addCheckFillListener(uiFieldPlayer3Preferences);
+
+        uiFieldPlayer4 = addComponent("Player 4");
+        uiFieldPlayer4Preferences = generatePlayerPreferences();
+        addFillListener(uiFieldPlayer4Preferences);
+        initialPlayer4Preferences = new boolean[6];
+        isInitialPlayer4PreferencesSet = false;
+        addCheckFillListener(uiFieldPlayer4Preferences);
+
+        uiFieldPlayer5 = addComponent("Player 5");
+        uiFieldPlayer5Preferences = generatePlayerPreferences();
+        addFillListener(uiFieldPlayer5Preferences);
+        initialPlayer5Preferences = new boolean[6];
+        isInitialPlayer5PreferencesSet = false;
+        addCheckFillListener(uiFieldPlayer5Preferences);
+
+        resetButton = addResetButtonComponent("Reset");
+        addButtonComponent("Randomize!");
+
+        rr = new RoleRandomizer();
+    }
+
+    public void cleanSlate() {
+        initialPlayer1Preferences = new boolean[6];
+        isInitialPlayer1PreferencesSet = false;
+        initialPlayer2Preferences = new boolean[6];
+        isInitialPlayer2PreferencesSet = false;
+        initialPlayer3Preferences = new boolean[6];
+        isInitialPlayer3PreferencesSet = false;
+        initialPlayer4Preferences = new boolean[6];
+        isInitialPlayer4PreferencesSet = false;
+        initialPlayer5Preferences = new boolean[6];
+        isInitialPlayer5PreferencesSet = false;
+
+        resetCheckBoxes(uiFieldPlayer1Preferences);
+        resetCheckBoxes(uiFieldPlayer2Preferences);
+        resetCheckBoxes(uiFieldPlayer3Preferences);
+        resetCheckBoxes(uiFieldPlayer4Preferences);
+        resetCheckBoxes(uiFieldPlayer5Preferences);
+
+        uiFieldPlayer1.setText("");
+        uiFieldPlayer2.setText("");
+        uiFieldPlayer3.setText("");
+        uiFieldPlayer4.setText("");
+        uiFieldPlayer5.setText("");
+
+        resetButton.setEnabled(false);
+
+        rr = new RoleRandomizer();
+    }
+
+    private void resetCheckBoxes(JCheckBox[] boxes) {
+        for (JCheckBox jCheckBox : boxes) {
+            jCheckBox.setSelected(false);
+        }
     }
 }

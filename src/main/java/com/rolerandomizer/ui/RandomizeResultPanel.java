@@ -61,4 +61,8 @@ public class RandomizeResultPanel extends JPanel
 
         add(container, BorderLayout.NORTH);
     }
+
+    public void cleanSlate() {
+        roleRandomizerResultField.setText("");
+    }
 }

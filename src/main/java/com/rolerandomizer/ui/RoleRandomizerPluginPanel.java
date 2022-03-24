@@ -25,8 +25,17 @@
 package com.rolerandomizer.ui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import com.rolerandomizer.RoleRandomizerConfig;
+import net.runelite.api.Client;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class RoleRandomizerPluginPanel extends PluginPanel
 {
@@ -34,18 +43,27 @@ public class RoleRandomizerPluginPanel extends PluginPanel
         public RandomizeResultPanel resultPanel;
         public RoleRandomizerPanel inputPanel;
 
-        public RoleRandomizerPluginPanel()
+    public RoleRandomizerPluginPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager)
         {
             super();
 
-            inputPanel = new RoleRandomizerPanel(this);
+            inputPanel = new RoleRandomizerPanel(client,config, chatMessageManager, this);
 
             setLayout(new BorderLayout(5, 10));
 
             resultPanel = new RandomizeResultPanel(this);
 
-            add(inputPanel, BorderLayout.CENTER);
-            add(resultPanel, BorderLayout.SOUTH);
-        }
+            JButton clearButton = new JButton("Clear");
+            clearButton.setBackground(ColorScheme.PROGRESS_ERROR_COLOR);
+            clearButton.setBorder(new EmptyBorder(5, 7, 5, 7));
+            clearButton.setToolTipText("This wipes the slate clean!");
+            clearButton.addActionListener(e -> {
+                inputPanel.cleanSlate();
+                resultPanel.cleanSlate();
+            });
 
+            add(inputPanel, BorderLayout.NORTH);
+            add(resultPanel, BorderLayout.CENTER);
+            add(clearButton, BorderLayout.SOUTH);
+        }
 }
