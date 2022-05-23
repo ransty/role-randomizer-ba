@@ -40,4 +40,14 @@ public interface RoleRandomizerConfig extends Config
     {
         return false;
     }
+    
+    @ConfigItem(
+            keyName = "keepPreviousPreferences",
+            name = "Keep role preferences ticked",
+            description = "Keep role preferences ticked after the randomize button has been pressed"
+    }
+    default boolean keepPreferences()
+    {
+        return false;
+    }
 }
