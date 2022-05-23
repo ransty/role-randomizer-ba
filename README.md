@@ -1,6 +1,11 @@
 # Role Randomizer
-_Based on the Bab discord bot_
-## Usage
+
+## v2.0.1 User interface
+---
+
+![user interface](https://media3.giphy.com/media/iYDzdsSe5FabJdyGbF/giphy.gif?cid=790b7611413273860b1de689549686a97bb87409a135bd60&rid=giphy.gif&ct=g)
+
+## v1.0.0 Commandline Usage
 
 ``::r <name> <prefs>(a/2/c/h/d/fill)``
 
@@ -23,30 +28,5 @@ _Based on the Bab discord bot_
 ``::prevr and ::rr``
 
 ![new commands](https://media2.giphy.com/media/VldmR7ubX8hrmBH0RW/giphy.gif)
-
-v2.0.1 User interface
----
-
-![user interface](https://media3.giphy.com/media/iYDzdsSe5FabJdyGbF/giphy.gif?cid=790b7611413273860b1de689549686a97bb87409a135bd60&rid=giphy.gif&ct=g)
-
-## TODO:
-- Not having to specify 'fill' should give the prefs of fill for the player
-- Leech mode (or for that fact, any "mode")
-
----
-## Changelog
-v2.0.2
-* Player 1 field is automatically filled in when clicked on (Must be logged in)
-* Reset button now disabled until first random is run
-* Clear button added clean the state completely
-* Fill unchecks itself if it detects other boxes have been unchecked (and vise versa)
-* UI pushes a GameMessage to the players chat if the config option is turned on in settings
-
-v2.0.1
-* Checkboxes instead of text input for player preferences
-
-v2.0.0
-* Added user interface to randomize roles instead of commandline
-* Now automatically removes previous roles that have been played already!
 
 
