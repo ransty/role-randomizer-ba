@@ -412,7 +412,9 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            removeRolePreferences(roles, index);
+                            if (!config.keepPreferences()) {
+                                removeRolePreferences(roles, index);     
+                            }
                             break;
                         case 2:
                             panel.resultPanel.roleRandomizerResultField.append(" Healer\t" + roles[index] + "\n");
