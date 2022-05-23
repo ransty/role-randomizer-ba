@@ -1,11 +1,9 @@
 # Role Randomizer
 
-## v2.0.1 User interface
----
-
+## User interface
 ![user interface](https://media3.giphy.com/media/iYDzdsSe5FabJdyGbF/giphy.gif?cid=790b7611413273860b1de689549686a97bb87409a135bd60&rid=giphy.gif&ct=g)
 
-## v1.0.0 Commandline Usage
+## Commandline Usage
 
 ``::r <name> <prefs>(a/2/c/h/d/fill)``
 
