@@ -45,7 +45,7 @@ public interface RoleRandomizerConfig extends Config
             keyName = "keepPreviousPreferences",
             name = "Keep role preferences ticked",
             description = "Keep role preferences ticked after the randomize button has been pressed"
-    }
+    )
     default boolean keepPreferences()
     {
         return false;
