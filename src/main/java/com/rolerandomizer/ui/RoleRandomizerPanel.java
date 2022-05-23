@@ -399,11 +399,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (Objects.equals(entry.getValue(), roles[index])) {
-                                    rr.popPreference(entry.getKey(), index);
-                                    uncheckPreference(roles[index], index);
-                                }
+                            if (!config.keepPreferences()) {
+                                removeRolePreferences(roles, index);     
                             }
                             break;
                         case 1:
@@ -415,12 +412,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (Objects.equals(entry.getValue(), roles[index])) {
-                                    rr.popPreference(entry.getKey(), index);
-                                    uncheckPreference(roles[index], index);
-                                }
-                            }
+                            removeRolePreferences(roles, index);
                             break;
                         case 2:
                             panel.resultPanel.roleRandomizerResultField.append(" Healer\t" + roles[index] + "\n");
@@ -432,11 +424,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (Objects.equals(entry.getValue(), roles[index])) {
-                                    rr.popPreference(entry.getKey(), index);
-                                    uncheckPreference(roles[index], index);
-                                }
+                            if (!config.keepPreferences()) {
+                                removeRolePreferences(roles, index);     
                             }
                             break;
                         case 3:
@@ -449,11 +438,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (Objects.equals(entry.getValue(), roles[index])) {
-                                    rr.popPreference(entry.getKey(), index);
-                                    uncheckPreference(roles[index], index);
-                                }
+                            if (!config.keepPreferences()) {
+                                removeRolePreferences(roles, index);     
                             }
                             break;
                         case 4:
@@ -466,11 +452,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
-                                if (Objects.equals(entry.getValue(), roles[index])) {
-                                    rr.popPreference(entry.getKey(), index);
-                                    uncheckPreference(roles[index], index);
-                                }
+                            if (!config.keepPreferences()) {
+                                removeRolePreferences(roles, index);     
                             }
                             break;
                     }
@@ -489,6 +472,15 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         } catch (Exception ex) {
             panel.resultPanel.roleRandomizerResultField.setText(" All roles exhausted or no prefs set");
+        }
+    }
+    
+    private void removeRolePreferences(String[] roles, int index) {
+        for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
+            if (Objects.equals(entry.getValue(), roles[index])) {
+                rr.popPreference(entry.getKey(), index);
+                uncheckPreference(roles[index], index);
+            }
         }
     }
 
