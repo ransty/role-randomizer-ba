@@ -1,7 +1,7 @@
 # Role Randomizer
 
 ## User interface
-![user interface](https://media3.giphy.com/media/iYDzdsSe5FabJdyGbF/giphy.gif?cid=790b7611413273860b1de689549686a97bb87409a135bd60&rid=giphy.gif&ct=g)
+![user interface](https://media4.giphy.com/media/chEuIDXhnjJ0mJmq0C/giphy.gif?cid=790b7611884e5774c6c7f395c198f0910d08b9aa1be84c79&rid=giphy.gif&ct=g)
 
 ## Commandline Usage
 
