@@ -48,6 +48,6 @@ public interface RoleRandomizerConfig extends Config
     )
     default boolean keepPreferences()
     {
-        return false;
+        return true;
     }
 }

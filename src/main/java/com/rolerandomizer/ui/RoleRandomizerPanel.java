@@ -47,6 +47,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     public boolean[] initialPlayer5Preferences;
     public boolean isInitialPlayer5PreferencesSet;
 
+    private String[] previousRandom;
+
     private RoleRandomizer rr;
 
     private Client client;
@@ -385,6 +387,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         try {
             String[] roles = rr.randomize();
+            this.previousRandom = roles;
 
             StringBuilder shortFormRoles = new StringBuilder();
 
@@ -400,7 +403,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                 }
                             }
                             if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);     
+                                removeRolePreferences(roles, index);
                             }
                             break;
                         case 1:
@@ -413,7 +416,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                 }
                             }
                             if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);     
+                                removeRolePreferences(roles, index);
                             }
                             break;
                         case 2:
@@ -427,7 +430,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                 }
                             }
                             if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);     
+                                removeRolePreferences(roles, index);
                             }
                             break;
                         case 3:
@@ -441,7 +444,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                 }
                             }
                             if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);     
+                                removeRolePreferences(roles, index);
                             }
                             break;
                         case 4:
@@ -455,7 +458,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                 }
                             }
                             if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);     
+                                removeRolePreferences(roles, index);
                             }
                             break;
                     }
@@ -474,6 +477,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         } catch (Exception ex) {
             panel.resultPanel.roleRandomizerResultField.setText(" All roles exhausted or no prefs set");
+        }
+    }
+
+    public void removePreviousRoles() {
+        for (int index = 0; index < 5; index++) {
+            removeRolePreferences(previousRandom, index);
         }
     }
     

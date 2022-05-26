@@ -24,10 +24,6 @@
  */
 package com.rolerandomizer.ui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.rolerandomizer.RoleRandomizerConfig;
 import net.runelite.api.Client;
 import net.runelite.client.chat.ChatMessageManager;
@@ -47,9 +43,7 @@ public class RoleRandomizerPluginPanel extends PluginPanel
         {
             super();
 
-            inputPanel = new RoleRandomizerPanel(client,config, chatMessageManager, this);
-
-            setLayout(new BorderLayout(5, 10));
+            inputPanel = new RoleRandomizerPanel(client, config, chatMessageManager, this);
 
             resultPanel = new RandomizeResultPanel(this);
 
@@ -62,8 +56,16 @@ public class RoleRandomizerPluginPanel extends PluginPanel
                 resultPanel.cleanSlate();
             });
 
-            add(inputPanel, BorderLayout.NORTH);
-            add(resultPanel, BorderLayout.CENTER);
-            add(clearButton, BorderLayout.SOUTH);
+            JButton removePreviousButton = new JButton("Remove previous roles");
+            removePreviousButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            removePreviousButton.setFocusable(false);
+            removePreviousButton.addActionListener(e -> {
+                inputPanel.removePreviousRoles();
+            });
+
+            add(inputPanel);
+            add(removePreviousButton);
+            add(resultPanel);
+            add(clearButton);
         }
 }
