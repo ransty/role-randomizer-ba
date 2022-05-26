@@ -1,4 +1,10 @@
 ## Changelog
+v2.0.4
+* Add remove previous roles button and opt-out to keep preferences ticked
+
+v2.0.3
+* Add option to keep preferences ticked (opt-in)
+
 v2.0.2
 * Player 1 field is automatically filled in when clicked on (Must be logged in)
 * Reset button now disabled until first random is run

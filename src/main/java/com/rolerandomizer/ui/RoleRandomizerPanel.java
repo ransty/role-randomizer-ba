@@ -22,8 +22,7 @@ import net.runelite.client.util.ColorUtil;
 
 public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
-
-        private final RoleRandomizerPluginPanel panel;
+    private final RoleRandomizerPluginPanel panel;
 
     public JTextField uiFieldPlayer1;
     public JCheckBox[] uiFieldPlayer1Preferences;
@@ -58,8 +57,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     private JButton roleRandomizerButton;
     private JButton resetButton;
 
-        protected RoleRandomizerPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager, RoleRandomizerPluginPanel panel)
-        {
+        protected RoleRandomizerPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager, RoleRandomizerPluginPanel panel) {
             super();
 
             this.panel = panel;
@@ -72,7 +70,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             initializeComponents();
         }
 
-    private void addFillListener(JCheckBox[] pPreferences) {
+        private void addFillListener(JCheckBox[] pPreferences) {
             pPreferences[5].addActionListener(e -> flipCheckboxes(pPreferences, pPreferences[5]));
         }
 
@@ -175,8 +173,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             return label;
         }
 
-    private JTextField addComponent(String label)
-    {
+    private JTextField addComponent(String label) {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
@@ -199,8 +196,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         return uiInput.getTextField();
     }
 
-    private JButton addResetButtonComponent(String label)
-    {
+    private JButton addResetButtonComponent(String label) {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
@@ -268,8 +264,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     }
 
-    private void addButtonComponent(String label)
-    {
+    private void addRandomizeButtonComponent(String label) {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
@@ -579,7 +574,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         addCheckFillListener(uiFieldPlayer5Preferences);
 
         resetButton = addResetButtonComponent("Reset");
-        addButtonComponent("Randomize!");
+        addRandomizeButtonComponent("Randomize!");
 
         rr = new RoleRandomizer();
     }
