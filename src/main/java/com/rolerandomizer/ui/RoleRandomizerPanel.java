@@ -173,6 +173,22 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             return label;
         }
 
+    private void clearPlayerPreferences(JCheckBox[] prefs) {
+            for (int i = 0; i < prefs.length; i++) {
+                prefs[i].setSelected(initial[i]);
+            }
+    }
+    
+    private JButton addClearPlayerPreferencesButton(JCheckBox[] playerPreferences, JTextField playerTextField) {
+        final JButton destroy = new JButton("X");
+        destroy.addActionListener(e -> {
+            clearPlayerPreferences(playerPreferences);
+            playerTextField.setText("");
+        });
+        
+        return destroy;
+    }
+    
     private JTextField addComponent(String label) {
         final JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
@@ -544,6 +560,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         initialPlayer1Preferences = new boolean[6];
         isInitialPlayer1PreferencesSet = false;
         addCheckFillListener(uiFieldPlayer1Preferences);
+        // need to actually add this to the JPanel lol
+        uiFieldPlayer1Clear = addClearPlayerPreferencesButton();
 
         uiFieldPlayer2 = addComponent("Player 2");
         uiFieldPlayer2Preferences = generatePlayerPreferences();
