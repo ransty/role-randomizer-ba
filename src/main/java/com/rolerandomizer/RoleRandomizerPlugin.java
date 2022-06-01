@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Provides;
 
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -54,7 +53,6 @@ import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.util.Text;
-import org.apache.commons.lang3.ArrayUtils;
 
 @Slf4j
 @PluginDescriptor(
