@@ -68,4 +68,29 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             add(resultPanel);
             add(clearButton);
         }
+
+    public boolean addPlayer(String stringSelection) {
+        String player = stringSelection.toString();
+        // sanitize the string even more
+        player = player.replaceAll("\\[.*\\]", "").trim().replace(":", "");
+        // player 1 is always covered by the UI
+        if (inputPanel.uiFieldPlayer2.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer2.setText(player);
+            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer2Preferences);
+            return true;
+        } else if (inputPanel.uiFieldPlayer3.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer3.setText(player);
+            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer3Preferences);
+            return true;
+        } else if (inputPanel.uiFieldPlayer4.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer4.setText(player);
+            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer4Preferences);
+            return true;
+        } else if (inputPanel.uiFieldPlayer5.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer5.setText(player);
+            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer5Preferences);
+            return true;
+        }
+        return false;
+    }
 }

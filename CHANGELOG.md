@@ -1,4 +1,7 @@
 ## Changelog
+v2.1.0
+* Add to rando menu option, clan chat and side panel
+
 v2.0.4
 * Add remove previous roles button and opt-out to keep preferences ticked
 

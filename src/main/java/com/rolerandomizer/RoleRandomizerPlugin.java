@@ -24,6 +24,7 @@
  */
 package com.rolerandomizer;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Provides;
 
 import java.awt.*;
@@ -34,11 +35,16 @@ import javax.inject.Inject;
 
 import com.rolerandomizer.ui.RoleRandomizerPluginPanel;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
+import net.runelite.api.*;
 import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.events.MenuEntryAdded;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.client.config.ConfigManager;
+import static net.runelite.api.widgets.WidgetInfo.TO_CHILD;
+import static net.runelite.api.widgets.WidgetInfo.TO_GROUP;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -46,6 +52,7 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.util.Text;
 
 @Slf4j
 @PluginDescriptor(
@@ -66,6 +73,15 @@ public class RoleRandomizerPlugin extends Plugin
 
 	private RoleRandomizer randomizer;
 
+	private static final String ADD_TO_RANDOMIZER = "Add to rando";
+	private static final String KICK_OPTION = "Kick";
+	private static final ImmutableList<String> BEFORE_OPTIONS = ImmutableList.of("Add friend", "Remove friend", KICK_OPTION);
+	private static final ImmutableList<String> AFTER_OPTIONS = ImmutableList.of("Message");
+
+	private String currentMessage = null;
+
+	private RoleRandomizerPluginPanel panel;
+
 	private String[] player1Prefs;
 	private String[] player2Prefs;
 	private String[] player3Prefs;
@@ -85,7 +101,7 @@ public class RoleRandomizerPlugin extends Plugin
 		randomizer = new RoleRandomizer();
 		usernames = new HashMap<>();
 
-		RoleRandomizerPluginPanel panel = new RoleRandomizerPluginPanel(client, config, chatMessageManager);
+		panel = new RoleRandomizerPluginPanel(client, config, chatMessageManager);
 
 		BufferedImage icon = ImageUtil.loadImageResource(RoleRandomizerPlugin.class, "icon.png");
 		navButton = NavigationButton.builder()
@@ -102,10 +118,105 @@ public class RoleRandomizerPlugin extends Plugin
 	protected void shutDown() {
 		usernames = null;
 		randomizer = null;
+		currentMessage = null;
 
 		clientToolbar.removeNavigation(navButton);
 
 		log.debug("Shutting down BA role randomizer plugin");
+	}
+
+	@Subscribe
+	public void onMenuOpened(MenuOpened event)
+	{
+		if (event.getMenuEntries().length < 2 || !config.addToRando())
+		{
+			return;
+		}
+
+		final MenuEntry entry = event.getMenuEntries()[event.getMenuEntries().length - 2];
+
+		if (entry.getType() != MenuAction.CC_OP_LOW_PRIORITY && entry.getType() != MenuAction.RUNELITE)
+		{
+			return;
+		}
+
+		final int groupId = TO_GROUP(entry.getParam1());
+		final int childId = TO_CHILD(entry.getParam1());
+
+		if (groupId != WidgetInfo.CHATBOX.getGroupId())
+		{
+			return;
+		}
+
+		final Widget widget = client.getWidget(groupId, childId);
+		final Widget parent = widget.getParent();
+
+		if (WidgetInfo.CHATBOX_MESSAGE_LINES.getId() != parent.getId())
+		{
+			return;
+		}
+
+		final int first = WidgetInfo.CHATBOX_FIRST_MESSAGE.getChildId();
+
+		final int dynamicChildId = (childId - first) * 4;
+
+		final Widget messageContents = parent.getChild(dynamicChildId);
+		if (messageContents == null)
+		{
+			return;
+		}
+
+		String playerName = messageContents.getText();
+
+		client.createMenuEntry(1)
+				.setOption(ADD_TO_RANDOMIZER)
+				.setTarget(entry.getTarget())
+				.setType(MenuAction.RUNELITE)
+				.onClick(e ->
+				{
+					panel.addPlayer(Text.removeTags(Text.toJagexName(playerName)));
+				});
+	}
+
+	@Subscribe
+	public void onMenuEntryAdded(MenuEntryAdded event)
+	{
+		if (!config.addToRando())
+		{
+			return;
+		}
+
+		final int componentId = event.getActionParam1();
+		int groupId = WidgetInfo.TO_GROUP(componentId);
+		String option = event.getOption();
+
+		if (groupId == WidgetInfo.FRIENDS_LIST.getGroupId() || groupId == WidgetInfo.FRIENDS_CHAT.getGroupId()
+				|| componentId == WidgetInfo.CLAN_MEMBER_LIST.getId() || componentId == WidgetInfo.CLAN_GUEST_MEMBER_LIST.getId())
+		{
+			boolean after;
+
+			if (AFTER_OPTIONS.contains(option))
+			{
+				after = true;
+			}
+			else if (BEFORE_OPTIONS.contains(option))
+			{
+				after = false;
+			}
+			else
+			{
+				return;
+			}
+
+			client.createMenuEntry(after ? -2 : -1)
+					.setOption(ADD_TO_RANDOMIZER)
+					.setTarget(event.getTarget())
+					.setType(MenuAction.RUNELITE)
+					.onClick(e ->
+					{
+						panel.addPlayer(Text.removeTags(Text.toJagexName(event.getTarget())));
+					});
+		}
 	}
 
 	public String buildPrefsPrint()

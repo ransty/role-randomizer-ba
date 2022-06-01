@@ -74,6 +74,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             pPreferences[5].addActionListener(e -> flipCheckboxes(pPreferences, pPreferences[5]));
         }
 
+        public void addAllPreferences(JCheckBox[] pPreferences) {
+            for (JCheckBox box : pPreferences) {
+                box.setSelected(true);
+            }
+        }
+
         private void addCheckFillListener(JCheckBox[] playerPreferences) {
             for (int i = 0; i < playerPreferences.length - 1; i++) {
                 playerPreferences[i].addActionListener(e -> {
@@ -97,7 +103,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             }
         }
 
-        private void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
+        public void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
             if (fillBox.isSelected()) {
                 for (int i = 0; i < checkboxes.length - 1; i++) {
                     checkboxes[i].setSelected(true);
@@ -531,6 +537,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             public void focusGained(FocusEvent e) {
                 if (client.getGameState().equals(GameState.LOGGED_IN)) {
                     uiFieldPlayer1.setText(Objects.requireNonNull(client.getLocalPlayer()).getName());
+                    addAllPreferences(uiFieldPlayer1Preferences);
                 }
             }
 
