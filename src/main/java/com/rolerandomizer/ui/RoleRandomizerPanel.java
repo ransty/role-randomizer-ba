@@ -65,7 +65,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             this.config = config;
             this.chatMessageManager = chatMessageManager;
 
-            setLayout(new GridLayout(6, 2, 7, 7));
+            setLayout(new GridLayout(6, 2, 5, 5));
 
             initializeComponents();
         }
@@ -116,10 +116,10 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         }
 
-        private JCheckBox[] generatePlayerPreferences() {
+        private JCheckBox[] generatePlayerPreferences(JTextField textField) {
             final JCheckBox[] preferences = new JCheckBox[6];
             final JPanel container = new JPanel();
-            container.setLayout(new GridLayout(2,5,0,0));
+            container.setLayout(new GridLayout(2,6,0,0));
 
             container.add(generateRadioLabel("M"));
             container.add(generateRadioLabel("2"));
@@ -127,6 +127,19 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             container.add(generateRadioLabel("C"));
             container.add(generateRadioLabel("D"));
             container.add(generateRadioLabel("F"));
+
+            JButton destroy = new JButton("x");
+            destroy.setOpaque(false);
+            destroy.setContentAreaFilled(false);
+            destroy.setBorderPainted(false);
+            destroy.setFocusable(false);
+            destroy.setForeground(ColorScheme.PROGRESS_ERROR_COLOR);
+            destroy.setBorder(null);
+            destroy.addActionListener(e -> {
+                clearPlayerPreferences(preferences);
+                textField.setText("");
+            });
+            container.add(destroy);
 
             for (int i = 0; i < preferences.length; i++) {
                 preferences[i] = generateRadioComponent();
@@ -177,6 +190,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             }
 
             return label;
+        }
+
+        private void clearPlayerPreferences(JCheckBox[] prefs) {
+            for (JCheckBox box : prefs) {
+                box.setSelected(false);
+            }
         }
 
     private JTextField addComponent(String label) {
@@ -546,35 +565,35 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
             }
         });
-        uiFieldPlayer1Preferences = generatePlayerPreferences();
+        uiFieldPlayer1Preferences = generatePlayerPreferences(uiFieldPlayer1);
         addFillListener(uiFieldPlayer1Preferences);
         initialPlayer1Preferences = new boolean[6];
         isInitialPlayer1PreferencesSet = false;
         addCheckFillListener(uiFieldPlayer1Preferences);
 
         uiFieldPlayer2 = addComponent("Player 2");
-        uiFieldPlayer2Preferences = generatePlayerPreferences();
+        uiFieldPlayer2Preferences = generatePlayerPreferences(uiFieldPlayer2);
         addFillListener(uiFieldPlayer2Preferences);
         initialPlayer2Preferences = new boolean[6];
         isInitialPlayer2PreferencesSet = false;
         addCheckFillListener(uiFieldPlayer2Preferences);
 
         uiFieldPlayer3 = addComponent("Player 3");
-        uiFieldPlayer3Preferences = generatePlayerPreferences();
+        uiFieldPlayer3Preferences = generatePlayerPreferences(uiFieldPlayer3);
         addFillListener(uiFieldPlayer3Preferences);
         initialPlayer3Preferences = new boolean[6];
         isInitialPlayer3PreferencesSet = false;
         addCheckFillListener(uiFieldPlayer3Preferences);
 
         uiFieldPlayer4 = addComponent("Player 4");
-        uiFieldPlayer4Preferences = generatePlayerPreferences();
+        uiFieldPlayer4Preferences = generatePlayerPreferences(uiFieldPlayer4);
         addFillListener(uiFieldPlayer4Preferences);
         initialPlayer4Preferences = new boolean[6];
         isInitialPlayer4PreferencesSet = false;
         addCheckFillListener(uiFieldPlayer4Preferences);
 
         uiFieldPlayer5 = addComponent("Player 5");
-        uiFieldPlayer5Preferences = generatePlayerPreferences();
+        uiFieldPlayer5Preferences = generatePlayerPreferences(uiFieldPlayer5);
         addFillListener(uiFieldPlayer5Preferences);
         initialPlayer5Preferences = new boolean[6];
         isInitialPlayer5PreferencesSet = false;

@@ -1,4 +1,7 @@
 ## Changelog
+v2.1.1
+* Add clear single player button
+
 v2.1.0
 * Add to rando menu option, clan chat and side panel
 
