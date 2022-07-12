@@ -158,15 +158,19 @@ public class RoleRandomizerPlugin extends Plugin
 
 		final int first = WidgetInfo.CHATBOX_FIRST_MESSAGE.getChildId();
 
-		final int dynamicChildId = (childId - first) * 4;
+		final int dynamicChildIdSender = (childId - first) * 4;
+		final int dynamicChildIdMessage = (childId - first) * 2 + 1;
 
-		final Widget messageContents = parent.getChild(dynamicChildId);
-		if (messageContents == null)
+		final Widget senderContents = parent.getChild(dynamicChildIdSender);
+		final Widget messageContents = parent.getChild(dynamicChildIdMessage);
+
+		if (senderContents == null || messageContents == null)
 		{
 			return;
 		}
 
-		String playerName = messageContents.getText();
+		String playerName = Text.removeTags(Text.toJagexName(senderContents.getText()));
+		String preferencesMessage = Text.removeTags(messageContents.getText());
 
 		client.createMenuEntry(1)
 				.setOption(ADD_TO_RANDOMIZER)
@@ -174,7 +178,7 @@ public class RoleRandomizerPlugin extends Plugin
 				.setType(MenuAction.RUNELITE)
 				.onClick(e ->
 				{
-					panel.addPlayer(Text.removeTags(Text.toJagexName(playerName)));
+					panel.addPlayer(playerName, preferencesMessage);
 				});
 	}
 

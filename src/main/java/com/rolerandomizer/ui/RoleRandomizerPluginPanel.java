@@ -25,6 +25,7 @@
 package com.rolerandomizer.ui;
 
 import com.rolerandomizer.RoleRandomizerConfig;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.ui.ColorScheme;
@@ -33,6 +34,7 @@ import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+@Slf4j
 public class RoleRandomizerPluginPanel extends PluginPanel
 {
 
@@ -69,28 +71,36 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             add(clearButton);
         }
 
-    public boolean addPlayer(String stringSelection) {
-        String player = stringSelection.toString();
+    public boolean addPlayer(String playerName) {
         // sanitize the string even more
-        player = player.replaceAll("\\[.*\\]", "").trim().replace(":", "");
-        // player 1 is always covered by the UI
-        if (inputPanel.uiFieldPlayer2.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer2.setText(player);
+        playerName = playerName.replaceAll("\\[.*\\]", "").trim().replace(":", "");
+        if (inputPanel.uiFieldPlayer1.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer1.setText(playerName);
+            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer1Preferences);
+        } else if (inputPanel.uiFieldPlayer2.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer2.setText(playerName);
             inputPanel.addAllPreferences(inputPanel.uiFieldPlayer2Preferences);
             return true;
         } else if (inputPanel.uiFieldPlayer3.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer3.setText(player);
+            inputPanel.uiFieldPlayer3.setText(playerName);
             inputPanel.addAllPreferences(inputPanel.uiFieldPlayer3Preferences);
             return true;
         } else if (inputPanel.uiFieldPlayer4.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer4.setText(player);
+            inputPanel.uiFieldPlayer4.setText(playerName);
             inputPanel.addAllPreferences(inputPanel.uiFieldPlayer4Preferences);
             return true;
         } else if (inputPanel.uiFieldPlayer5.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer5.setText(player);
+            inputPanel.uiFieldPlayer5.setText(playerName);
             inputPanel.addAllPreferences(inputPanel.uiFieldPlayer5Preferences);
             return true;
         }
         return false;
+    }
+
+    public void addPlayer(String playerName, String preferencesMessage) {
+        log.info("Player name: " + playerName);
+        log.info("Player message: " + preferencesMessage);
+        playerName = playerName.replaceAll("\\[.*\\]", "").trim().replace(":", "");
+        log.info("Sanitised playerName: " + playerName);
     }
 }
