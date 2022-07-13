@@ -1,4 +1,7 @@
 ## Changelog
+v2.1.2
+* Determine preferences when using add to rando menu - The player must type out a valid preference string (fill/any/aacdh)
+
 v2.1.1
 * Add clear single player button
 

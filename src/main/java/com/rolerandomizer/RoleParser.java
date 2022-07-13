@@ -3,12 +3,7 @@ package com.rolerandomizer;
 import com.rolerandomizer.exceptions.CannotDetermineRolesException;
 import com.rolerandomizer.exceptions.CannotParseArgException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -147,15 +142,17 @@ public class RoleParser
 		}
 	}
 
-	private List<MetaRoleInfo> prefsFrom(String roleStr)
+	public List<MetaRoleInfo> prefsFrom(String roleStr)
 	{
-		if (roleStr.equals("fill"))
+		roleStr = roleStr.toLowerCase(Locale.ROOT);
+		if (roleStr.equalsIgnoreCase("fill") || roleStr.equalsIgnoreCase("all"))
 		{
 			return ALL_ROLES;
 		}
+		String finalRoleStr = roleStr;
 		return Arrays.stream(MetaRoleInfo.values())
 			.filter(info -> info.getMatches().stream()
-				.anyMatch(s -> Pattern.compile(s).matcher(roleStr).find()))
+				.anyMatch(s -> Pattern.compile(s).matcher(finalRoleStr).find()))
 			.collect(Collectors.toList());
 	}
 

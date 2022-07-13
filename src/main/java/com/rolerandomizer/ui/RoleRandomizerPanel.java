@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import com.rolerandomizer.RoleRandomizerConfig;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -20,6 +21,7 @@ import net.runelite.client.ui.components.FlatTextField;
 import com.rolerandomizer.RoleRandomizer;
 import net.runelite.client.util.ColorUtil;
 
+@Slf4j
 public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private final RoleRandomizerPluginPanel panel;
@@ -77,6 +79,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         public void addAllPreferences(JCheckBox[] pPreferences) {
             for (JCheckBox box : pPreferences) {
                 box.setSelected(true);
+            }
+        }
+
+        public void setPreferences(JCheckBox[] pPreferences, boolean[] preferences) {
+            for (int i = 0; i < pPreferences.length; i++) {
+                pPreferences[i].setSelected(preferences[i]);
             }
         }
 

@@ -24,6 +24,9 @@
  */
 package com.rolerandomizer.ui;
 
+import com.rolerandomizer.MetaRoleInfo;
+import com.rolerandomizer.PlayerPrefs;
+import com.rolerandomizer.RoleParser;
 import com.rolerandomizer.RoleRandomizerConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -33,6 +36,7 @@ import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.util.List;
 
 @Slf4j
 public class RoleRandomizerPluginPanel extends PluginPanel
@@ -71,36 +75,72 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             add(clearButton);
         }
 
-    public boolean addPlayer(String playerName) {
+    public void addPlayer(String playerName) {
         // sanitize the string even more
         playerName = playerName.replaceAll("\\[.*\\]", "").trim().replace(":", "");
-        if (inputPanel.uiFieldPlayer1.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer1.setText(playerName);
-            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer1Preferences);
-        } else if (inputPanel.uiFieldPlayer2.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer2.setText(playerName);
-            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer2Preferences);
-            return true;
-        } else if (inputPanel.uiFieldPlayer3.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer3.setText(playerName);
-            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer3Preferences);
-            return true;
-        } else if (inputPanel.uiFieldPlayer4.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer4.setText(playerName);
-            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer4Preferences);
-            return true;
-        } else if (inputPanel.uiFieldPlayer5.getText().isEmpty()) {
-            inputPanel.uiFieldPlayer5.setText(playerName);
-            inputPanel.addAllPreferences(inputPanel.uiFieldPlayer5Preferences);
-            return true;
-        }
-        return false;
+        addNextPlayer(playerName, new boolean[]{true, true, true, true, true, true});
     }
 
     public void addPlayer(String playerName, String preferencesMessage) {
-        log.info("Player name: " + playerName);
-        log.info("Player message: " + preferencesMessage);
         playerName = playerName.replaceAll("\\[.*\\]", "").trim().replace(":", "");
-        log.info("Sanitised playerName: " + playerName);
+        RoleParser rp = new RoleParser();
+
+        // There must be a better way to do this
+        List<MetaRoleInfo> preferences = rp.prefsFrom(preferencesMessage);
+        boolean[] setPreferences = new boolean[6];
+        int fillCounter = 0;
+        for (MetaRoleInfo p : preferences) {
+            switch(p.getShortName()) {
+                case "m":
+                    fillCounter++;
+                    setPreferences[0] = true;
+                    break;
+                case "2":
+                    fillCounter++;
+                    setPreferences[1] = true;
+                    break;
+                case "h":
+                    fillCounter++;
+                    setPreferences[2] = true;
+                    break;
+                case "c":
+                    fillCounter++;
+                    setPreferences[3] = true;
+                    break;
+                case "d":
+                    fillCounter++;
+                    setPreferences[4] = true;
+                    break;
+            }
+        }
+        if (fillCounter == 5) {
+            setPreferences[5] = true;
+        }
+        addNextPlayer(playerName, setPreferences);
+    }
+
+    private boolean addNextPlayer(String playerName, boolean[] prefs) {
+        if (inputPanel.uiFieldPlayer1.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer1.setText(playerName);
+            inputPanel.setPreferences(inputPanel.uiFieldPlayer1Preferences, prefs);
+            return true;
+        } else if (inputPanel.uiFieldPlayer2.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer2.setText(playerName);
+            inputPanel.setPreferences(inputPanel.uiFieldPlayer2Preferences, prefs);
+            return true;
+        } else if (inputPanel.uiFieldPlayer3.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer3.setText(playerName);
+            inputPanel.setPreferences(inputPanel.uiFieldPlayer3Preferences, prefs);
+            return true;
+        } else if (inputPanel.uiFieldPlayer4.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer4.setText(playerName);
+            inputPanel.setPreferences(inputPanel.uiFieldPlayer4Preferences, prefs);
+            return true;
+        } else if (inputPanel.uiFieldPlayer5.getText().isEmpty()) {
+            inputPanel.uiFieldPlayer5.setText(playerName);
+            inputPanel.setPreferences(inputPanel.uiFieldPlayer5Preferences, prefs);
+            return true;
+        }
+        return false;
     }
 }
