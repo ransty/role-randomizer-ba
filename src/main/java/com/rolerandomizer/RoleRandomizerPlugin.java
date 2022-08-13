@@ -60,24 +60,18 @@ import net.runelite.client.util.Text;
 )
 public class RoleRandomizerPlugin extends Plugin
 {
-	@Inject
-	private Client client;
-
-	@Inject
-	private RoleRandomizerConfig config;
-
-	@Inject
-	private ChatMessageManager chatMessageManager;
-
-	private final RoleParser parser = new RoleParser();
-
-	private RoleRandomizer randomizer;
-
 	private static final String ADD_TO_RANDOMIZER = "Add to rando";
 	private static final String KICK_OPTION = "Kick";
 	private static final ImmutableList<String> BEFORE_OPTIONS = ImmutableList.of("Add friend", "Remove friend", KICK_OPTION);
 	private static final ImmutableList<String> AFTER_OPTIONS = ImmutableList.of("Message");
-
+	private final RoleParser parser = new RoleParser();
+	@Inject
+	private Client client;
+	@Inject
+	private RoleRandomizerConfig config;
+	@Inject
+	private ChatMessageManager chatMessageManager;
+	private RoleRandomizer randomizer;
 	private String currentMessage = null;
 
 	private RoleRandomizerPluginPanel panel;
@@ -149,6 +143,7 @@ public class RoleRandomizerPlugin extends Plugin
 		}
 
 		final Widget widget = client.getWidget(groupId, childId);
+		assert widget != null;
 		final Widget parent = widget.getParent();
 
 		if (WidgetInfo.CHATBOX_MESSAGE_LINES.getId() != parent.getId())
@@ -173,9 +168,7 @@ public class RoleRandomizerPlugin extends Plugin
 				.setTarget(entry.getTarget())
 				.setType(MenuAction.RUNELITE)
 				.onClick(e ->
-				{
-					panel.addPlayer(Text.removeTags(Text.toJagexName(playerName)));
-				});
+						panel.addPlayer(Text.removeTags(Text.toJagexName(playerName))));
 	}
 
 	@Subscribe
@@ -213,9 +206,7 @@ public class RoleRandomizerPlugin extends Plugin
 					.setTarget(event.getTarget())
 					.setType(MenuAction.RUNELITE)
 					.onClick(e ->
-					{
-						panel.addPlayer(Text.removeTags(Text.toJagexName(event.getTarget())));
-					});
+							panel.addPlayer(Text.removeTags(Text.toJagexName(event.getTarget()))));
 		}
 	}
 

@@ -23,7 +23,7 @@ import net.runelite.client.util.ColorUtil;
 public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private final RoleRandomizerPluginPanel panel;
-
+    private final ChatMessageManager chatMessageManager;
     public JTextField uiFieldPlayer1;
     public JCheckBox[] uiFieldPlayer1Preferences;
     public JTextField uiFieldPlayer2;
@@ -34,7 +34,6 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     public JCheckBox[] uiFieldPlayer4Preferences;
     public JTextField uiFieldPlayer5;
     public JCheckBox[] uiFieldPlayer5Preferences;
-
     public boolean[] initialPlayer1Preferences;
     public boolean isInitialPlayer1PreferencesSet;
     public boolean[] initialPlayer2Preferences;
@@ -45,15 +44,10 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     public boolean isInitialPlayer4PreferencesSet;
     public boolean[] initialPlayer5Preferences;
     public boolean isInitialPlayer5PreferencesSet;
-
     private String[] previousRandom;
-
     private RoleRandomizer rr;
-
     private Client client;
     private RoleRandomizerConfig config;
-    private final ChatMessageManager chatMessageManager;
-
     private JButton roleRandomizerButton;
     private JButton resetButton;
 
