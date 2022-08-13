@@ -1,7 +1,7 @@
 ## Changelog
 v2.1.2
 * Fix bug with clear single player button
-  * The initial player preferences were being reset to instead of the new player preferences input after clicking the 'x' to clear
+  * When clicking reset after clearing a single player, the inital preferences were being picked up instead of the new player preferences
 * Randomize now determines which role is missing if there are any
 
 v2.1.1
