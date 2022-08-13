@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import com.rolerandomizer.RoleRandomizerConfig;
+import com.rolerandomizer.exceptions.NoPermutationException;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -16,10 +17,12 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
+import lombok.extern.slf4j.Slf4j;
 
 import com.rolerandomizer.RoleRandomizer;
 import net.runelite.client.util.ColorUtil;
 
+@Slf4j
 public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private final RoleRandomizerPluginPanel panel;
@@ -110,7 +113,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
         }
 
-        private JCheckBox[] generatePlayerPreferences(JTextField textField) {
+        private JCheckBox[] generatePlayerPreferences(JTextField textField, boolean[] initialPreferences, int playerNumber) {
             final JCheckBox[] preferences = new JCheckBox[6];
             final JPanel container = new JPanel();
             container.setLayout(new GridLayout(2,6,0,0));
@@ -130,7 +133,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             destroy.setForeground(ColorScheme.PROGRESS_ERROR_COLOR);
             destroy.setBorder(null);
             destroy.addActionListener(e -> {
-                clearPlayerPreferences(preferences);
+                clearPlayerPreferences(preferences, initialPreferences, playerNumber);
                 textField.setText("");
             });
             container.add(destroy);
@@ -186,9 +189,31 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             return label;
         }
 
-        private void clearPlayerPreferences(JCheckBox[] prefs) {
+        private void clearPlayerPreferences(JCheckBox[] prefs, boolean[] initialPreferences, int playerNumber) {
             for (JCheckBox box : prefs) {
                 box.setSelected(false);
+            }
+
+            for (int i = 0; i < initialPreferences.length; i++) {
+                initialPreferences[i] = false;
+            }
+
+            switch(playerNumber) {
+                case 1:
+                    isInitialPlayer1PreferencesSet = false;
+                    break;
+                case 2:
+                    isInitialPlayer2PreferencesSet = false;
+                    break;
+                case 3:
+                    isInitialPlayer3PreferencesSet = false;
+                    break;
+                case 4:
+                    isInitialPlayer4PreferencesSet = false;
+                    break;
+                case 5:
+                    isInitialPlayer5PreferencesSet = false;
+                    break;
             }
         }
 
@@ -397,6 +422,12 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             return;
         }
 
+        // Before getting preferences, check at least 1 box is ticked per player
+        if (!checkMinimumBoxesTicked()) {
+            panel.resultPanel.roleRandomizerResultField.setText(" Minimum amount of roles not set!");
+            return;
+        }
+
         getPreferences();
 
         try {
@@ -489,9 +520,79 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                 }
             }
 
-        } catch (Exception ex) {
-            panel.resultPanel.roleRandomizerResultField.setText(" All roles exhausted or no prefs set");
+        } catch (NoPermutationException ex) {
+            // Determine which role is missing
+            panel.resultPanel.roleRandomizerResultField.setText(missingRole());
         }
+    }
+
+    private String missingRole() {
+        StringBuilder result = new StringBuilder();
+        int[] p1Count = countRoles(uiFieldPlayer1Preferences);
+        int[] p2Count = countRoles(uiFieldPlayer2Preferences);
+        int[] p3Count = countRoles(uiFieldPlayer3Preferences);
+        int[] p4Count = countRoles(uiFieldPlayer4Preferences);
+        int[] p5Count = countRoles(uiFieldPlayer5Preferences);
+
+        int main_attack = p1Count[0] + p2Count[0] + p3Count[0] + p4Count[0] + p5Count[0];
+        int second_attack = p1Count[1] + p2Count[1] + p3Count[1] + p4Count[1] + p5Count[1];
+        int healer = p1Count[2] + p2Count[2] + p3Count[2] + p4Count[2] + p5Count[2];
+        int collector = p1Count[3] + p2Count[3] + p3Count[3] + p4Count[3] + p5Count[3];
+        int defender = p1Count[4] + p2Count[4] + p3Count[4] + p4Count[4] + p5Count[4];
+
+        if (main_attack == 0) {
+            result.append(" No available Mains");
+            result.append(System.getProperty("line.separator"));
+        } if (second_attack == 0) {
+            result.append(" No available 2nd Attackers");
+            result.append(System.getProperty("line.separator"));
+        } if (healer == 0) {
+            result.append(" No available Healers");
+            result.append(System.getProperty("line.separator"));
+        } if (collector == 0) {
+            result.append(" No available Collectors");
+            result.append(System.getProperty("line.separator"));
+        } if (defender == 0) {
+            result.append(" No available Defenders");
+            result.append(System.getProperty("line.separator"));
+        }
+        log.info(result.toString());
+        return result.toString();
+    }
+
+    private int[] countRoles(JCheckBox[] rolesSelected) {
+        int[] returnCount = new int[5];
+        for (int i = 0; i < rolesSelected.length; i++) {
+            if (rolesSelected[i].isSelected()) {
+                returnCount[i] = 1;
+            }
+        }
+        return returnCount;
+    }
+
+    private boolean checkMinimumBoxesTicked() {
+        if (minimumRolesSet(uiFieldPlayer1Preferences)) {
+            if (minimumRolesSet(uiFieldPlayer2Preferences)) {
+                if (minimumRolesSet(uiFieldPlayer3Preferences)) {
+                    if (minimumRolesSet(uiFieldPlayer4Preferences)) {
+                        if (minimumRolesSet(uiFieldPlayer5Preferences)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean minimumRolesSet(JCheckBox[] playerPreferences) {
+        for (int i = 0; i < playerPreferences.length; i++) {
+            if (playerPreferences[i].isSelected()) {
+                // This means at least one box has been checked
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removePreviousRoles() {
@@ -559,38 +660,40 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
             }
         });
-        uiFieldPlayer1Preferences = generatePlayerPreferences(uiFieldPlayer1);
-        addFillListener(uiFieldPlayer1Preferences);
-        initialPlayer1Preferences = new boolean[6];
+
         isInitialPlayer1PreferencesSet = false;
+        initialPlayer1Preferences = new boolean[6];
+        uiFieldPlayer1Preferences = generatePlayerPreferences(uiFieldPlayer1, initialPlayer1Preferences, 1);
+        addFillListener(uiFieldPlayer1Preferences);
         addCheckFillListener(uiFieldPlayer1Preferences);
 
         uiFieldPlayer2 = addComponent("Player 2");
-        uiFieldPlayer2Preferences = generatePlayerPreferences(uiFieldPlayer2);
-        addFillListener(uiFieldPlayer2Preferences);
         initialPlayer2Preferences = new boolean[6];
         isInitialPlayer2PreferencesSet = false;
+        uiFieldPlayer2Preferences = generatePlayerPreferences(uiFieldPlayer2, initialPlayer2Preferences, 2);
+        addFillListener(uiFieldPlayer2Preferences);
+
         addCheckFillListener(uiFieldPlayer2Preferences);
 
         uiFieldPlayer3 = addComponent("Player 3");
-        uiFieldPlayer3Preferences = generatePlayerPreferences(uiFieldPlayer3);
-        addFillListener(uiFieldPlayer3Preferences);
         initialPlayer3Preferences = new boolean[6];
         isInitialPlayer3PreferencesSet = false;
+        uiFieldPlayer3Preferences = generatePlayerPreferences(uiFieldPlayer3, initialPlayer3Preferences, 3);
+        addFillListener(uiFieldPlayer3Preferences);
         addCheckFillListener(uiFieldPlayer3Preferences);
 
         uiFieldPlayer4 = addComponent("Player 4");
-        uiFieldPlayer4Preferences = generatePlayerPreferences(uiFieldPlayer4);
-        addFillListener(uiFieldPlayer4Preferences);
         initialPlayer4Preferences = new boolean[6];
         isInitialPlayer4PreferencesSet = false;
+        uiFieldPlayer4Preferences = generatePlayerPreferences(uiFieldPlayer4, initialPlayer4Preferences, 4);
+        addFillListener(uiFieldPlayer4Preferences);
         addCheckFillListener(uiFieldPlayer4Preferences);
 
         uiFieldPlayer5 = addComponent("Player 5");
-        uiFieldPlayer5Preferences = generatePlayerPreferences(uiFieldPlayer5);
-        addFillListener(uiFieldPlayer5Preferences);
         initialPlayer5Preferences = new boolean[6];
         isInitialPlayer5PreferencesSet = false;
+        uiFieldPlayer5Preferences = generatePlayerPreferences(uiFieldPlayer5, initialPlayer5Preferences, 5);
+        addFillListener(uiFieldPlayer5Preferences);
         addCheckFillListener(uiFieldPlayer5Preferences);
 
         resetButton = addResetButtonComponent("Reset");

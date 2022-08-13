@@ -45,7 +45,7 @@ public class RoleRandomizer
         usernames = new HashMap<Integer, String>();
     }
 
-    public ArrayList generatePermutations() throws Exception
+    public ArrayList generatePermutations() throws NoPermutationException
     {
         ArrayList<int[]> permutations = new ArrayList<>();
         for (int i = 0; i < 5; i++)
@@ -93,7 +93,7 @@ public class RoleRandomizer
         return permutations;
     }
 
-    public String[] randomize() throws Exception
+    public String[] randomize() throws NoPermutationException
     {
         if (isPreferencesSet())
         {
@@ -162,7 +162,7 @@ public class RoleRandomizer
         playerFivePreferences = prefs;
     }
 
-    private String[] buildRolesString(int[] ints) throws Exception
+    private String[] buildRolesString(int[] ints) throws NoPermutationException
     {
         String[] roles = new String[5];
         for (int i = 0; i < ints.length; i++)
