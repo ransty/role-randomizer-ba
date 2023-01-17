@@ -24,10 +24,8 @@
  */
 package com.rolerandomizer.exceptions;
 
-public class NoPermutationException extends Exception
-{
-    public NoPermutationException(String message)
-    {
+public class NoPermutationException extends Exception {
+    public NoPermutationException(String message) {
         super(message);
     }
 }

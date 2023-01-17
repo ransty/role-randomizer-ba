@@ -33,41 +33,39 @@ import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class RoleRandomizerPluginPanel extends PluginPanel
-{
+public class RoleRandomizerPluginPanel extends PluginPanel {
 
-        public RandomizeResultPanel resultPanel;
-        public RoleRandomizerPanel inputPanel;
+    public RandomizeResultPanel resultPanel;
+    public RoleRandomizerPanel inputPanel;
 
-    public RoleRandomizerPluginPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager)
-        {
-            super();
+    public RoleRandomizerPluginPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager) {
+        super();
 
-            inputPanel = new RoleRandomizerPanel(client, config, chatMessageManager, this);
+        inputPanel = new RoleRandomizerPanel(client, config, chatMessageManager, this);
 
-            resultPanel = new RandomizeResultPanel(this);
+        resultPanel = new RandomizeResultPanel(this);
 
-            JButton clearButton = new JButton("Clear");
-            clearButton.setBackground(ColorScheme.PROGRESS_ERROR_COLOR);
-            clearButton.setBorder(new EmptyBorder(5, 7, 5, 7));
-            clearButton.setToolTipText("This wipes the slate clean!");
-            clearButton.addActionListener(e -> {
-                inputPanel.cleanSlate();
-                resultPanel.cleanSlate();
-            });
+        JButton clearButton = new JButton("Clear");
+        clearButton.setBackground(ColorScheme.PROGRESS_ERROR_COLOR);
+        clearButton.setBorder(new EmptyBorder(5, 7, 5, 7));
+        clearButton.setToolTipText("This wipes the slate clean!");
+        clearButton.addActionListener(e -> {
+            inputPanel.cleanSlate();
+            resultPanel.cleanSlate();
+        });
 
-            JButton removePreviousButton = new JButton("Remove previous roles");
-            removePreviousButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-            removePreviousButton.setFocusable(false);
-            removePreviousButton.addActionListener(e -> {
-                inputPanel.removePreviousRoles();
-            });
+        JButton removePreviousButton = new JButton("Remove previous roles");
+        removePreviousButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        removePreviousButton.setFocusable(false);
+        removePreviousButton.addActionListener(e -> {
+            inputPanel.removePreviousRoles();
+        });
 
-            add(inputPanel);
-            add(removePreviousButton);
-            add(resultPanel);
-            add(clearButton);
-        }
+        add(inputPanel);
+        add(removePreviousButton);
+        add(resultPanel);
+        add(clearButton);
+    }
 
     public boolean addPlayer(String stringSelection) {
         String player = stringSelection.toString();

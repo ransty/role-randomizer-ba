@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import com.rolerandomizer.RoleRandomizerConfig;
 import com.rolerandomizer.exceptions.NoPermutationException;
 import net.runelite.api.ChatMessageType;
@@ -51,6 +52,8 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     private String[] previousRandom;
 
+    private Map roleMap;
+
     private RoleRandomizer rr;
 
     private Client client;
@@ -60,168 +63,176 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     private JButton roleRandomizerButton;
     private JButton resetButton;
 
-        protected RoleRandomizerPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager, RoleRandomizerPluginPanel panel) {
-            super();
+    protected RoleRandomizerPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager, RoleRandomizerPluginPanel panel) {
+        super();
 
-            this.panel = panel;
-            this.client = client;
-            this.config = config;
-            this.chatMessageManager = chatMessageManager;
+        this.panel = panel;
+        this.client = client;
+        this.config = config;
+        this.chatMessageManager = chatMessageManager;
 
-            setLayout(new GridLayout(6, 2, 5, 5));
+        setLayout(new GridLayout(6, 2, 5, 5));
 
-            initializeComponents();
+        initializeComponents();
+
+
+        this.roleMap = new HashMap();
+        roleMap.put(0, "Main");
+        roleMap.put(1, "Second");
+        roleMap.put(2, "Healer");
+        roleMap.put(3, "Collector");
+        roleMap.put(4, "Defender");
+    }
+
+    private void addFillListener(JCheckBox[] pPreferences) {
+        pPreferences[5].addActionListener(e -> flipCheckboxes(pPreferences, pPreferences[5]));
+    }
+
+    public void addAllPreferences(JCheckBox[] pPreferences) {
+        for (JCheckBox box : pPreferences) {
+            box.setSelected(true);
         }
+    }
 
-        private void addFillListener(JCheckBox[] pPreferences) {
-            pPreferences[5].addActionListener(e -> flipCheckboxes(pPreferences, pPreferences[5]));
-        }
-
-        public void addAllPreferences(JCheckBox[] pPreferences) {
-            for (JCheckBox box : pPreferences) {
-                box.setSelected(true);
-            }
-        }
-
-        private void addCheckFillListener(JCheckBox[] playerPreferences) {
-            for (int i = 0; i < playerPreferences.length - 1; i++) {
-                playerPreferences[i].addActionListener(e -> {
-                    if (playerPreferences[5].isSelected()) {
-                        playerPreferences[5].setSelected(false);
-                    } else {
-                        int isFill = 0;
-                        for (int box = 0; box < playerPreferences.length - 1; box++) {
-                            if (!playerPreferences[box].isSelected()) {
-                                break;
-                            } else {
-                                isFill++;
-                            }
-                        }
-
-                        if (isFill == 5) {
-                            playerPreferences[5].setSelected(true);
+    private void addCheckFillListener(JCheckBox[] playerPreferences) {
+        for (int i = 0; i < playerPreferences.length - 1; i++) {
+            playerPreferences[i].addActionListener(e -> {
+                if (playerPreferences[5].isSelected()) {
+                    playerPreferences[5].setSelected(false);
+                } else {
+                    int isFill = 0;
+                    for (int box = 0; box < playerPreferences.length - 1; box++) {
+                        if (!playerPreferences[box].isSelected()) {
+                            break;
+                        } else {
+                            isFill++;
                         }
                     }
-                });
-            }
-        }
 
-        public void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
-            if (fillBox.isSelected()) {
-                for (int i = 0; i < checkboxes.length - 1; i++) {
-                    checkboxes[i].setSelected(true);
+                    if (isFill == 5) {
+                        playerPreferences[5].setSelected(true);
+                    }
                 }
-            } else {
-                for (int i = 0; i < checkboxes.length - 1; i++) {
-                    checkboxes[i].setSelected(false);
-                }
-            }
-
-        }
-
-        private JCheckBox[] generatePlayerPreferences(JTextField textField, boolean[] initialPreferences, int playerNumber) {
-            final JCheckBox[] preferences = new JCheckBox[6];
-            final JPanel container = new JPanel();
-            container.setLayout(new GridLayout(2,6,0,0));
-
-            container.add(generateRadioLabel("M"));
-            container.add(generateRadioLabel("2"));
-            container.add(generateRadioLabel("H"));
-            container.add(generateRadioLabel("C"));
-            container.add(generateRadioLabel("D"));
-            container.add(generateRadioLabel("F"));
-
-            JButton destroy = new JButton("x");
-            destroy.setOpaque(false);
-            destroy.setContentAreaFilled(false);
-            destroy.setBorderPainted(false);
-            destroy.setFocusable(false);
-            destroy.setForeground(ColorScheme.PROGRESS_ERROR_COLOR);
-            destroy.setBorder(null);
-            destroy.addActionListener(e -> {
-                clearPlayerPreferences(preferences, initialPreferences, playerNumber);
-                textField.setText("");
             });
-            container.add(destroy);
+        }
+    }
 
-            for (int i = 0; i < preferences.length; i++) {
-                preferences[i] = generateRadioComponent();
-                container.add(preferences[i]);
+    public void flipCheckboxes(JCheckBox[] checkboxes, JCheckBox fillBox) {
+        if (fillBox.isSelected()) {
+            for (int i = 0; i < checkboxes.length - 1; i++) {
+                checkboxes[i].setSelected(true);
             }
-
-            add(container);
-            return preferences;
+        } else {
+            for (int i = 0; i < checkboxes.length - 1; i++) {
+                checkboxes[i].setSelected(false);
+            }
         }
 
-        private JCheckBox generateRadioComponent() {
-            final JCheckBox checkbox = new JCheckBox();
+    }
 
-            checkbox.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-            checkbox.setBorder(new EmptyBorder(0,0,0,0));
-            checkbox.setFocusPainted(false);
-            checkbox.setFocusable(false);
+    private JCheckBox[] generatePlayerPreferences(JTextField textField, boolean[] initialPreferences, int playerNumber) {
+        final JCheckBox[] preferences = new JCheckBox[6];
+        final JPanel container = new JPanel();
+        container.setLayout(new GridLayout(2, 6, 0, 0));
 
-            return checkbox;
+        container.add(generateRadioLabel("M"));
+        container.add(generateRadioLabel("2"));
+        container.add(generateRadioLabel("H"));
+        container.add(generateRadioLabel("C"));
+        container.add(generateRadioLabel("D"));
+        container.add(generateRadioLabel("F"));
+
+        JButton destroy = new JButton("x");
+        destroy.setOpaque(false);
+        destroy.setContentAreaFilled(false);
+        destroy.setBorderPainted(false);
+        destroy.setFocusable(false);
+        destroy.setForeground(ColorScheme.PROGRESS_ERROR_COLOR);
+        destroy.setBorder(null);
+        destroy.addActionListener(e -> {
+            clearPlayerPreferences(preferences, initialPreferences, playerNumber);
+            textField.setText("");
+        });
+        container.add(destroy);
+
+        for (int i = 0; i < preferences.length; i++) {
+            preferences[i] = generateRadioComponent();
+            container.add(preferences[i]);
         }
 
-        private JLabel generateRadioLabel(String role) {
-            final JLabel label = new JLabel(role);
+        add(container);
+        return preferences;
+    }
 
-            label.setFont(FontManager.getRunescapeSmallFont());
-            label.setBorder(new EmptyBorder(0, 5,0,0));
-            label.setForeground(Color.WHITE);
-            label.setFocusable(false);
-            switch (role) {
-                case "M":
-                    label.setToolTipText("Main attacker");
-                    break;
-                case "2":
-                    label.setToolTipText("Second attacker");
-                    break;
-                case "H":
-                    label.setToolTipText("Healer");
-                    break;
-                case "C":
-                    label.setToolTipText("Collector");
-                    break;
-                case "D":
-                    label.setToolTipText("Defender");
-                    break;
-                case "F":
-                    label.setToolTipText("Fill");
-                    break;
-            }
+    private JCheckBox generateRadioComponent() {
+        final JCheckBox checkbox = new JCheckBox();
 
-            return label;
+        checkbox.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        checkbox.setBorder(new EmptyBorder(0, 0, 0, 0));
+        checkbox.setFocusPainted(false);
+        checkbox.setFocusable(false);
+
+        return checkbox;
+    }
+
+    private JLabel generateRadioLabel(String role) {
+        final JLabel label = new JLabel(role);
+
+        label.setFont(FontManager.getRunescapeSmallFont());
+        label.setBorder(new EmptyBorder(0, 5, 0, 0));
+        label.setForeground(Color.WHITE);
+        label.setFocusable(false);
+        switch (role) {
+            case "M":
+                label.setToolTipText("Main attacker");
+                break;
+            case "2":
+                label.setToolTipText("Second attacker");
+                break;
+            case "H":
+                label.setToolTipText("Healer");
+                break;
+            case "C":
+                label.setToolTipText("Collector");
+                break;
+            case "D":
+                label.setToolTipText("Defender");
+                break;
+            case "F":
+                label.setToolTipText("Fill");
+                break;
         }
 
-        private void clearPlayerPreferences(JCheckBox[] prefs, boolean[] initialPreferences, int playerNumber) {
-            for (JCheckBox box : prefs) {
-                box.setSelected(false);
-            }
+        return label;
+    }
 
-            for (int i = 0; i < initialPreferences.length; i++) {
-                initialPreferences[i] = false;
-            }
-
-            switch(playerNumber) {
-                case 1:
-                    isInitialPlayer1PreferencesSet = false;
-                    break;
-                case 2:
-                    isInitialPlayer2PreferencesSet = false;
-                    break;
-                case 3:
-                    isInitialPlayer3PreferencesSet = false;
-                    break;
-                case 4:
-                    isInitialPlayer4PreferencesSet = false;
-                    break;
-                case 5:
-                    isInitialPlayer5PreferencesSet = false;
-                    break;
-            }
+    private void clearPlayerPreferences(JCheckBox[] prefs, boolean[] initialPreferences, int playerNumber) {
+        for (JCheckBox box : prefs) {
+            box.setSelected(false);
         }
+
+        for (int i = 0; i < initialPreferences.length; i++) {
+            initialPreferences[i] = false;
+        }
+
+        switch (playerNumber) {
+            case 1:
+                isInitialPlayer1PreferencesSet = false;
+                break;
+            case 2:
+                isInitialPlayer2PreferencesSet = false;
+                break;
+            case 3:
+                isInitialPlayer3PreferencesSet = false;
+                break;
+            case 4:
+                isInitialPlayer4PreferencesSet = false;
+                break;
+            case 5:
+                isInitialPlayer5PreferencesSet = false;
+                break;
+        }
+    }
 
     private JTextField addComponent(String label) {
         final JPanel container = new JPanel();
@@ -288,21 +299,37 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         return resetButton;
     }
 
-    private void resetPlayerPreferences(JCheckBox[] prefs, boolean[] initial) {
-            for (int i = 0; i < prefs.length; i++) {
-                prefs[i].setSelected(initial[i]);
+    /***
+     * This method is only used by the "Reset" button on the panel
+     * @param prefs The role preferences of the player to reset
+     * @param initial The initial preferences of the player.
+     */
+    private void resetPlayerPreferences(JCheckBox[] prefs, JTextField playerName, boolean[] initial) {
+        int roleCount = 0;
+        for (String role : this.previousRandom) {
+            if (playerName.getText().equals(role)) {
+                break;
             }
+            roleCount++;
+        }
+        log.debug("Player " + playerName.getText() + " previous role was " + this.roleMap.get(roleCount));
+        for (int i = 0; i < prefs.length; i++) {
+            if (i == roleCount) {
+                continue;
+            }
+            prefs[i].setSelected(initial[i]);
+        }
     }
 
     private void resetPreferences() {
         panel.resultPanel.roleRandomizerResultField.setText("");
         panel.resultPanel.roleRandomizerResultField.insert("\n", 0);
 
-        resetPlayerPreferences(uiFieldPlayer1Preferences, initialPlayer1Preferences);
-        resetPlayerPreferences(uiFieldPlayer2Preferences, initialPlayer2Preferences);
-        resetPlayerPreferences(uiFieldPlayer3Preferences, initialPlayer3Preferences);
-        resetPlayerPreferences(uiFieldPlayer4Preferences, initialPlayer4Preferences);
-        resetPlayerPreferences(uiFieldPlayer5Preferences, initialPlayer5Preferences);
+        resetPlayerPreferences(uiFieldPlayer1Preferences, uiFieldPlayer1, initialPlayer1Preferences);
+        resetPlayerPreferences(uiFieldPlayer2Preferences, uiFieldPlayer2, initialPlayer2Preferences);
+        resetPlayerPreferences(uiFieldPlayer3Preferences, uiFieldPlayer3, initialPlayer3Preferences);
+        resetPlayerPreferences(uiFieldPlayer4Preferences, uiFieldPlayer4, initialPlayer4Preferences);
+        resetPlayerPreferences(uiFieldPlayer5Preferences, uiFieldPlayer5, initialPlayer5Preferences);
 
         rr.playerOnePreferences = null;
         rr.playerTwoPreferences = null;
@@ -378,9 +405,9 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     }
 
     public void setInitialPreferences(JCheckBox[] currentPrefs, boolean[] initPrefs) {
-            for (int i = 0; i < initPrefs.length; i++) {
-                initPrefs[i] = currentPrefs[i].isSelected();
-            }
+        for (int i = 0; i < initPrefs.length; i++) {
+            initPrefs[i] = currentPrefs[i].isSelected();
+        }
     }
 
     public void getPreferences() {
@@ -443,76 +470,76 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             StringBuilder shortFormRoles = new StringBuilder();
 
             for (int index = 0; index < 5; index++) {
-                    switch (index) {
-                        case 0:
-                            panel.resultPanel.roleRandomizerResultField.insert(" Main\t" + roles[index] + "\n", 1);
-                            if (config.sendToChatBox()) {
-                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
-                                    shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
-                                            Color.RED.darker())).append(" / "
-                                    );
-                                }
+                switch (index) {
+                    case 0:
+                        panel.resultPanel.roleRandomizerResultField.insert(" Main\t" + roles[index] + "\n", 1);
+                        if (config.sendToChatBox()) {
+                            if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
+                                        Color.RED.darker())).append(" / "
+                                );
                             }
-                            if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);
+                        }
+                        if (!config.keepPreferences()) {
+                            removeRolePreferences(roles, index);
+                        }
+                        break;
+                    case 1:
+                        panel.resultPanel.roleRandomizerResultField.append(" Second\t" + roles[index] + "\n");
+                        if (config.sendToChatBox()) {
+                            if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
+                                        Color.RED.darker())).append(" / "
+                                );
                             }
-                            break;
-                        case 1:
-                            panel.resultPanel.roleRandomizerResultField.append(" Second\t" + roles[index] + "\n");
-                            if (config.sendToChatBox()) {
-                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
-                                    shortFormRoles.append(ColorUtil.wrapWithColorTag((roles[index]),
-                                            Color.RED.darker())).append(" / "
-                                    );
-                                }
+                        }
+                        if (!config.keepPreferences()) {
+                            removeRolePreferences(roles, index);
+                        }
+                        break;
+                    case 2:
+                        panel.resultPanel.roleRandomizerResultField.append(" Healer\t" + roles[index] + "\n");
+                        if (config.sendToChatBox()) {
+                            if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                        (roles[index]),
+                                        Color.GREEN.darker().darker())).append(" / "
+                                );
                             }
-                            if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);
+                        }
+                        if (!config.keepPreferences()) {
+                            removeRolePreferences(roles, index);
+                        }
+                        break;
+                    case 3:
+                        panel.resultPanel.roleRandomizerResultField.append(" Collector\t" + roles[index] + "\n");
+                        if (config.sendToChatBox()) {
+                            if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                        (roles[index]),
+                                        Color.YELLOW)).append(" / "
+                                );
                             }
-                            break;
-                        case 2:
-                            panel.resultPanel.roleRandomizerResultField.append(" Healer\t" + roles[index] + "\n");
-                            if (config.sendToChatBox()) {
-                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
-                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
-                                            (roles[index]),
-                                            Color.GREEN.darker().darker())).append(" / "
-                                    );
-                                }
+                        }
+                        if (!config.keepPreferences()) {
+                            removeRolePreferences(roles, index);
+                        }
+                        break;
+                    case 4:
+                        panel.resultPanel.roleRandomizerResultField.append(" Defender\t" + roles[index]);
+                        if (config.sendToChatBox()) {
+                            if (client.getGameState().equals(GameState.LOGGED_IN)) {
+                                shortFormRoles.append(ColorUtil.wrapWithColorTag(
+                                        (roles[index]),
+                                        Color.BLUE.darker())
+                                );
                             }
-                            if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);
-                            }
-                            break;
-                        case 3:
-                            panel.resultPanel.roleRandomizerResultField.append(" Collector\t" + roles[index] + "\n");
-                            if (config.sendToChatBox()) {
-                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
-                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
-                                            (roles[index]),
-                                            Color.YELLOW)).append(" / "
-                                    );
-                                }
-                            }
-                            if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);
-                            }
-                            break;
-                        case 4:
-                            panel.resultPanel.roleRandomizerResultField.append(" Defender\t" + roles[index]);
-                            if (config.sendToChatBox()) {
-                                if (client.getGameState().equals(GameState.LOGGED_IN)) {
-                                    shortFormRoles.append(ColorUtil.wrapWithColorTag(
-                                            (roles[index]),
-                                            Color.BLUE.darker())
-                                    );
-                                }
-                            }
-                            if (!config.keepPreferences()) {
-                                removeRolePreferences(roles, index);
-                            }
-                            break;
-                    }
+                        }
+                        if (!config.keepPreferences()) {
+                            removeRolePreferences(roles, index);
+                        }
+                        break;
+                }
             }
 
             if (config.sendToChatBox()) {
@@ -549,16 +576,20 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
         if (main_attack == 0) {
             result.append(" No available Mains");
             result.append(System.getProperty("line.separator"));
-        } if (second_attack == 0) {
+        }
+        if (second_attack == 0) {
             result.append(" No available 2nd Attackers");
             result.append(System.getProperty("line.separator"));
-        } if (healer == 0) {
+        }
+        if (healer == 0) {
             result.append(" No available Healers");
             result.append(System.getProperty("line.separator"));
-        } if (collector == 0) {
+        }
+        if (collector == 0) {
             result.append(" No available Collectors");
             result.append(System.getProperty("line.separator"));
-        } if (defender == 0) {
+        }
+        if (defender == 0) {
             result.append(" No available Defenders");
             result.append(System.getProperty("line.separator"));
         }
@@ -606,9 +637,9 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             removeRolePreferences(previousRandom, index);
         }
     }
-    
+
     private void removeRolePreferences(String[] roles, int index) {
-        for (Map.Entry<Integer, String> entry: rr.usernames.entrySet()) {
+        for (Map.Entry<Integer, String> entry : rr.usernames.entrySet()) {
             if (Objects.equals(entry.getValue(), roles[index])) {
                 rr.popPreference(entry.getKey(), index);
                 uncheckPreference(roles[index], index);
@@ -647,7 +678,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-            randomize();
+        randomize();
     }
 
     private void initializeComponents() {

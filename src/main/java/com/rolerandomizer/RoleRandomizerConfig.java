@@ -29,25 +29,22 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("BA Role Randomizer")
-public interface RoleRandomizerConfig extends Config
-{
+public interface RoleRandomizerConfig extends Config {
     @ConfigItem(
             keyName = "randomizeResultChatbox",
             name = "Print result to in-game chatbox",
             description = "Sends the result of the random from the UI to the in-game chatbox"
     )
-    default boolean sendToChatBox()
-    {
+    default boolean sendToChatBox() {
         return false;
     }
-    
+
     @ConfigItem(
             keyName = "keepPreviousPreferences",
             name = "Keep role preferences ticked",
             description = "Keep role preferences ticked after the randomize button has been pressed"
     )
-    default boolean keepPreferences()
-    {
+    default boolean keepPreferences() {
         return true;
     }
 
@@ -57,8 +54,7 @@ public interface RoleRandomizerConfig extends Config
             description = "Add option on chat messages to add to rando",
             position = 2
     )
-    default boolean addToRando()
-    {
+    default boolean addToRando() {
         return false;
     }
 

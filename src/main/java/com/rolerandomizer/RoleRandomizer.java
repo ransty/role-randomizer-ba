@@ -27,10 +27,10 @@ package com.rolerandomizer;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Math;
+
 import com.rolerandomizer.exceptions.NoPermutationException;
 
-public class RoleRandomizer
-{
+public class RoleRandomizer {
 
     public HashMap<Integer, String> usernames;
 
@@ -40,46 +40,34 @@ public class RoleRandomizer
     public int[] playerFourPreferences;
     public int[] playerFivePreferences;
 
-    public RoleRandomizer()
-    {
+    public RoleRandomizer() {
         usernames = new HashMap<Integer, String>();
     }
 
-    public ArrayList generatePermutations() throws NoPermutationException
-    {
+    public ArrayList generatePermutations() throws NoPermutationException {
         ArrayList<int[]> permutations = new ArrayList<>();
-        for (int i = 0; i < 5; i++)
-        {
-            if (playerOnePreferences[i] != 1)
-            {
+        for (int i = 0; i < 5; i++) {
+            if (playerOnePreferences[i] != 1) {
                 continue;
             }
-            
-            for (int j = 0; j < 5; j++)
-            {
-                if (j == i || playerTwoPreferences[j] != 1)
-                {
+
+            for (int j = 0; j < 5; j++) {
+                if (j == i || playerTwoPreferences[j] != 1) {
                     continue;
                 }
-                
-                for (int k = 0; k < 5; k++)
-                {
-                    if (k == i || k == j || playerThreePreferences[k] != 1)
-                    {
+
+                for (int k = 0; k < 5; k++) {
+                    if (k == i || k == j || playerThreePreferences[k] != 1) {
                         continue;
                     }
 
-                    for (int l = 0; l < 5; l++)
-                    {
-                        if (l == i || l == j || l == k || playerFourPreferences[l] != 1)
-                        {
+                    for (int l = 0; l < 5; l++) {
+                        if (l == i || l == j || l == k || playerFourPreferences[l] != 1) {
                             continue;
                         }
 
-                        for (int m = 0; m < 5; m++)
-                        {
-                            if (m == i || m == j || m == k || m == l || playerFivePreferences[m] != 1)
-                            {
+                        for (int m = 0; m < 5; m++) {
+                            if (m == i || m == j || m == k || m == l || playerFivePreferences[m] != 1) {
                                 continue;
                             }
 
@@ -93,36 +81,25 @@ public class RoleRandomizer
         return permutations;
     }
 
-    public String[] randomize() throws NoPermutationException
-    {
-        if (isPreferencesSet())
-        {
+    public String[] randomize() throws NoPermutationException {
+        if (isPreferencesSet()) {
             ArrayList<int[]> perms = generatePermutations();
-            if (perms.size() > 0)
-            {
+            if (perms.size() > 0) {
                 int chosenIndex = (int) Math.floor(Math.random() * perms.size());
                 return buildRolesString(perms.get(chosenIndex));
-            }
-            else
-            {
+            } else {
                 throw new NoPermutationException("No permutations to choose from");
             }
         }
         return null;
     }
 
-    public boolean isPreferencesSet()
-    {
-        if (playerOnePreferences != null && playerOnePreferences.length > 0)
-        {
-            if (playerTwoPreferences != null && playerTwoPreferences.length > 0)
-            {
-                if (playerThreePreferences != null && playerThreePreferences.length > 0)
-                {
-                    if (playerFourPreferences != null && playerFourPreferences.length > 0)
-                    {
-                        if (playerFivePreferences != null && playerFivePreferences.length > 0)
-                        {
+    public boolean isPreferencesSet() {
+        if (playerOnePreferences != null && playerOnePreferences.length > 0) {
+            if (playerTwoPreferences != null && playerTwoPreferences.length > 0) {
+                if (playerThreePreferences != null && playerThreePreferences.length > 0) {
+                    if (playerFourPreferences != null && playerFourPreferences.length > 0) {
+                        if (playerFivePreferences != null && playerFivePreferences.length > 0) {
                             return true;
                         }
                     }
@@ -132,41 +109,33 @@ public class RoleRandomizer
         return false;
     }
 
-    public void setUsernames(HashMap<Integer, String> usernames)
-    {
+    public void setUsernames(HashMap<Integer, String> usernames) {
         this.usernames = usernames;
     }
 
-    public void setPlayerOnePreferences(int[] prefs)
-    {
+    public void setPlayerOnePreferences(int[] prefs) {
         playerOnePreferences = prefs;
     }
 
-    public void setPlayerTwoPreferences(int[] prefs)
-    {
+    public void setPlayerTwoPreferences(int[] prefs) {
         playerTwoPreferences = prefs;
     }
 
-    public void setPlayerThreePreferences(int[] prefs)
-    {
+    public void setPlayerThreePreferences(int[] prefs) {
         playerThreePreferences = prefs;
     }
 
-    public void setPlayerFourPreferences(int[] prefs)
-    {
+    public void setPlayerFourPreferences(int[] prefs) {
         playerFourPreferences = prefs;
     }
 
-    public void setPlayerFivePreferences(int[] prefs)
-    {
+    public void setPlayerFivePreferences(int[] prefs) {
         playerFivePreferences = prefs;
     }
 
-    private String[] buildRolesString(int[] ints) throws NoPermutationException
-    {
+    private String[] buildRolesString(int[] ints) throws NoPermutationException {
         String[] roles = new String[5];
-        for (int i = 0; i < ints.length; i++)
-        {
+        for (int i = 0; i < ints.length; i++) {
             roles[ints[i]] = usernames.get(i);
         }
         return roles;

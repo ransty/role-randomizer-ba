@@ -29,14 +29,12 @@ import net.runelite.client.ui.FontManager;
 import javax.swing.*;
 import java.awt.*;
 
-public class RandomizeResultPanel extends JPanel
-{
+public class RandomizeResultPanel extends JPanel {
     private final RoleRandomizerPluginPanel panel;
 
     public JTextArea roleRandomizerResultField;
 
-    protected RandomizeResultPanel(RoleRandomizerPluginPanel panel)
-    {
+    protected RandomizeResultPanel(RoleRandomizerPluginPanel panel) {
         super();
 
         this.panel = panel;
