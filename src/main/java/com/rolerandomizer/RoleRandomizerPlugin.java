@@ -73,7 +73,7 @@ public class RoleRandomizerPlugin extends Plugin
 
 	private RoleRandomizer randomizer;
 
-	private static final String ADD_TO_RANDOMIZER = "Add to rando";
+	private static final String ADD_TO_RANDOMIZER = "Add to BA Role Randomizer";
 	private static final String KICK_OPTION = "Kick";
 	private static final ImmutableList<String> BEFORE_OPTIONS = ImmutableList.of("Add friend", "Remove friend", KICK_OPTION);
 	private static final ImmutableList<String> AFTER_OPTIONS = ImmutableList.of("Message");
@@ -128,7 +128,7 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOpened(MenuOpened event)
 	{
-		if (event.getMenuEntries().length < 2 || !config.addToRando())
+		if (event.getMenuEntries().length < 2)
 		{
 			return;
 		}
@@ -181,10 +181,6 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		if (!config.addToRando())
-		{
-			return;
-		}
 
 		final int componentId = event.getActionParam1();
 		int groupId = WidgetInfo.TO_GROUP(componentId);

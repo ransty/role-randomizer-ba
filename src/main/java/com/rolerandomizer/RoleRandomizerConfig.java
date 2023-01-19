@@ -51,15 +51,4 @@ public interface RoleRandomizerConfig extends Config
         return true;
     }
 
-    @ConfigItem(
-            keyName = "addToRando",
-            name = "Add to rando",
-            description = "Add option on chat messages to add to rando",
-            position = 2
-    )
-    default boolean addToRando()
-    {
-        return false;
-    }
-
 }
