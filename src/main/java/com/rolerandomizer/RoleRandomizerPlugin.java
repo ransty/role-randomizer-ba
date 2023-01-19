@@ -73,7 +73,7 @@ public class RoleRandomizerPlugin extends Plugin
 
 	private RoleRandomizer randomizer;
 
-	private static final String ADD_TO_RANDOMIZER = "Add to rando";
+	private static final String ADD_TO_RANDOMIZER = "Add to BA Role Randomizer";
 	private static final String KICK_OPTION = "Kick";
 	private static final ImmutableList<String> BEFORE_OPTIONS = ImmutableList.of("Add friend", "Remove friend", KICK_OPTION);
 	private static final ImmutableList<String> AFTER_OPTIONS = ImmutableList.of("Message");
