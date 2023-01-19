@@ -128,7 +128,7 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOpened(MenuOpened event)
 	{
-		if (event.getMenuEntries().length < 2 || !config.addToRando())
+		if (event.getMenuEntries().length < 2)
 		{
 			return;
 		}
@@ -181,10 +181,6 @@ public class RoleRandomizerPlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		if (!config.addToRando())
-		{
-			return;
-		}
 
 		final int componentId = event.getActionParam1();
 		int groupId = WidgetInfo.TO_GROUP(componentId);
