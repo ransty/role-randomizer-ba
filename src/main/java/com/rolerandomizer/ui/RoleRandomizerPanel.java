@@ -48,6 +48,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
     public boolean isInitialPlayer4PreferencesSet;
     public boolean[] initialPlayer5Preferences;
     public boolean isInitialPlayer5PreferencesSet;
+    public boolean keepPreviousRolesSelected;
 
     private String[] previousRandom;
 
@@ -67,6 +68,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
             this.client = client;
             this.config = config;
             this.chatMessageManager = chatMessageManager;
+            this.keepPreviousRolesSelected = false;
 
             setLayout(new GridLayout(6, 2, 5, 5));
 
@@ -453,7 +455,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            if (!config.keepPreferences()) {
+                            if (!keepPreviousRolesSelected) {
                                 removeRolePreferences(roles, index);
                             }
                             break;
@@ -466,7 +468,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            if (!config.keepPreferences()) {
+                            if (!keepPreviousRolesSelected) {
                                 removeRolePreferences(roles, index);
                             }
                             break;
@@ -480,7 +482,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            if (!config.keepPreferences()) {
+                            if (!keepPreviousRolesSelected) {
                                 removeRolePreferences(roles, index);
                             }
                             break;
@@ -494,7 +496,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            if (!config.keepPreferences()) {
+                            if (!keepPreviousRolesSelected) {
                                 removeRolePreferences(roles, index);
                             }
                             break;
@@ -508,7 +510,7 @@ public class RoleRandomizerPanel extends JPanel implements ActionListener {
                                     );
                                 }
                             }
-                            if (!config.keepPreferences()) {
+                            if (!keepPreviousRolesSelected) {
                                 removeRolePreferences(roles, index);
                             }
                             break;
