@@ -38,6 +38,7 @@ public class RoleRandomizerPluginPanel extends PluginPanel
 
         public RandomizeResultPanel resultPanel;
         public RoleRandomizerPanel inputPanel;
+        public OptionsPanel optionsPanel;
 
     public RoleRandomizerPluginPanel(Client client, RoleRandomizerConfig config, ChatMessageManager chatMessageManager)
         {
@@ -46,6 +47,8 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             inputPanel = new RoleRandomizerPanel(client, config, chatMessageManager, this);
 
             resultPanel = new RandomizeResultPanel(this);
+
+            optionsPanel = new OptionsPanel(this, inputPanel);
 
             JButton clearButton = new JButton("Clear");
             clearButton.setBackground(ColorScheme.PROGRESS_ERROR_COLOR);
@@ -67,6 +70,7 @@ public class RoleRandomizerPluginPanel extends PluginPanel
             add(removePreviousButton);
             add(resultPanel);
             add(clearButton);
+            add(optionsPanel);
         }
 
     public boolean addPlayer(String stringSelection) {

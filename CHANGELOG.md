@@ -1,4 +1,10 @@
 ## Changelog
+v2.2.0
+* Move keep previous roles selected to inside the panel
+
+v2.1.3
+* Make add to rando menu option configurable
+
 v2.1.2
 * Fix bug with clear single player button
   * When clicking reset after clearing a single player, the inital preferences were being picked up instead of the new player preferences
