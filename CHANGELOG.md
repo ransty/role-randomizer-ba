@@ -1,8 +1,8 @@
 ## Changelog
-v2.2.0
+v2.3.0
 * Move keep previous roles selected to inside the panel
 
-v2.1.3
+v2.2.1
 * Make add to rando menu option configurable
 
 v2.1.2
