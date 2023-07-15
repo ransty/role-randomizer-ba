@@ -1,4 +1,6 @@
-# Role Randomizer
+# BA Role Randomizer
+
+[![](https://img.shields.io/endpoint?url=https://i.pluginhub.info/shields/installs/plugin/ba-role-randomizer)](https://runelite.net/plugin-hub)
 
 ## User interface
 ![add to rando menu option](https://media1.giphy.com/media/B0onXwxITw4xQsZtcf/giphy.gif?cid=790b7611f14b812a0c033532416421d344311ec3c9f19c1c&rid=giphy.gif&ct=g)
