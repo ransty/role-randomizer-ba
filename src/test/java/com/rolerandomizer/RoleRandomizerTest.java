@@ -27,8 +27,11 @@ package com.rolerandomizer;
 import com.rolerandomizer.exceptions.NoPermutationException;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 
 public class RoleRandomizerTest {
@@ -111,7 +114,6 @@ public class RoleRandomizerTest {
         {
             roles = randomizer.randomize();
             assertEquals(users.size(), roles.length);
-            assertEquals(true, roles[0].contains(""));
         }
         catch (Exception e)
         {
@@ -146,15 +148,15 @@ public class RoleRandomizerTest {
     public void testIsPreferencesSet_notSet()
     {
         randomizer.setPlayerFivePreferences(null);
-        assertEquals(false, randomizer.isPreferencesSet());
+        assertFalse(randomizer.isPreferencesSet());
         randomizer.setPlayerFourPreferences(null);
-        assertEquals(false, randomizer.isPreferencesSet());
+        assertFalse(randomizer.isPreferencesSet());
         randomizer.setPlayerThreePreferences(null);
-        assertEquals(false, randomizer.isPreferencesSet());
+        assertFalse(randomizer.isPreferencesSet());
         randomizer.setPlayerTwoPreferences(null);
-        assertEquals(false, randomizer.isPreferencesSet());
+        assertFalse(randomizer.isPreferencesSet());
         randomizer.setPlayerOnePreferences(null);
-        assertEquals(false, randomizer.isPreferencesSet());
+        assertFalse(randomizer.isPreferencesSet());
     }
 
     @Test
@@ -171,5 +173,31 @@ public class RoleRandomizerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testGeneratePermutationsFill() throws NoPermutationException {
+        int[] fillPrefs = {1, 1, 1, 1, 1};
+        randomizer.setPlayerOnePreferences(fillPrefs);
+        randomizer.setPlayerTwoPreferences(fillPrefs);
+        randomizer.setPlayerThreePreferences(fillPrefs);
+        randomizer.setPlayerFourPreferences(fillPrefs);
+        randomizer.setPlayerFivePreferences(fillPrefs);
+
+        ArrayList<int[]> permutations = randomizer.generatePermutations();
+
+        assertEquals(permutations.size(), 120);
+    }
+
+    @Test
+    public void testRandomizeFill() throws NoPermutationException {
+        int[] fillPrefs = {1, 1, 1, 1, 1};
+        randomizer.setPlayerOnePreferences(fillPrefs);
+        randomizer.setPlayerTwoPreferences(fillPrefs);
+        randomizer.setPlayerThreePreferences(fillPrefs);
+        randomizer.setPlayerFourPreferences(fillPrefs);
+        randomizer.setPlayerFivePreferences(fillPrefs);
+
+        randomizer.randomize();
     }
 }
